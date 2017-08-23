@@ -1,0 +1,22 @@
+{
+  // Shell executable: "/bin/bash", "/bin/sh", "/usr/bin/zsh"...
+  "sdf_exec_cli_executable": "sdfcli",
+
+  // The output of the command can be shown on the Panel or in a New File: "panel", "file" or "none".
+  "sdf_exec_output": "panel",
+
+  // Set the Output File Syntax. Default is Ruby, because Ruby looks nice. =)
+  "sdf_exec_output_syntax": "Ruby",
+
+  // Enable or Disable the word wrap at the Output File.
+  "sdf_exec_output_word_wrap": true,
+
+  // Enable or Disable the Debug infos (for plugin developers).
+  "sdf_exec_debug": true,
+
+  // Defines where the command should be executed: false, "project_folder" or a subfolder.
+  // Subfolder paths MUST be relative to the project (e.g. "Sandbox/Customizations").
+  // If "project_folder" is set, will execute: cd project_folder && sdfcli command.
+  // If a subfolder is set, will execute: cd project_folder/subfolder && sdfcli command.
+  "sdf_exec_context": "project_folder"
+}

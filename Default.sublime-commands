@@ -1,6 +1,6 @@
 [
   {
-    "caption": "Shell Exec: Open",
-    "command": "shell_exec_open"
+    "caption": "SDF Exec: Open",
+    "command": "sdf_exec_open"
   }
 ]
