@@ -95,8 +95,7 @@ class SdfExecOpen(sublime_plugin.TextCommand):
     ]
 
     def runSdfExec(user_command):
-      print(cli_commands[user_command][2])
-#      SdfExec.run_shell_command(self.args, self.view, cli_commands[user_command])
+#      SdfExec.run_shell_command(self.args, self.view, cli_commands[user_command][2])
 
     sublime.active_window().show_quick_panel(cli_commands, runSdfExec)
 
