@@ -28,7 +28,6 @@ class SdfExecOpen(sublime_plugin.TextCommand):
 				sublime.active_window().show_input_panel("NetSuite Password", stars, run_programm, get_password, None)
 
 		if SdfExec.password == "":
-			#sublime.active_window().show_input_panel("NetSuite Password", "", get_password, None, None)
 			sublime.active_window().show_input_panel("NetSuite Password", "", None, get_password, None)
 		else:
 			SdfExecRun.run(self, edit, **args)
@@ -267,7 +266,6 @@ class SdfExec:
 		delay_seconds = 0.5
 		while True:
 			if SdfExec.show_loader:
-				print( SdfExec.loading_message + " " + loading_display[ loading_position ] )
 				sublime.status_message( SdfExec.loading_message + " " + loading_display[ loading_position ] )
 				loading_position = 1 if loading_position == 0 else 0
 			if SdfExec.kill_loader:
