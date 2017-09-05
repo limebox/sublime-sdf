@@ -5,13 +5,18 @@
 	],
 	"cli_arguments": {
 			"adddependencies": "-all",
-			"listfiles": "-folder \"/SuiteScripts\"",
-			"preview": "",
+			"deploy": "",
+			"importbundle": "",
 			"importfiles": "",
 			"importobjects": "",
 			"listbundles": "",
+			"listfiles": "-folder \"/SuiteScripts\"",
 			"listmissingdependencies": "",
-			"listobjects": ""
+			"listobjects": "",
+			"preview": "",
+			"update": "",
+			"updatecustomrecordwithinstances": "",
+			"validate": "-server"
 	},
 	"custom_objects": [
 		[

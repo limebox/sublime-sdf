@@ -1,4 +1,4 @@
-import sys, time, sublime, sublime_plugin, re, os, subprocess, time, signal, json
+import sys, time, sublime, sublime_plugin, re, os, subprocess, time, signal, json, time
 from subprocess import STDOUT
 from threading import Thread
 
@@ -52,26 +52,64 @@ class SdfExecRun(sublime_plugin.TextCommand):
 		def runSdfExec(user_command):
 			selected_id = user_command
 			object_type = 0
-			print( user_command )
+			files = []
+
+			if os.name == 'nt':
+				path_var = "\\"
+			else:
+				path_var = "/"
+
 			def selectObject(user_command):
+				if user_command == -1:
+					return
 				cli_arguments["listobjects"] = '-type "' + custom_objects[user_command][1] + '"'
 				SdfExec.run_shell_command(self.args, self.view, cli_commands[selected_id], cli_arguments, custom_objects[user_command])
 
 			def selectObjectToImport(user_command):
+				if user_command == -1:
+					return
 				runSdfExec.object_type=user_command
 				cli_arguments["listobjects"] = '-type "' + custom_objects[runSdfExec.object_type][1] + '"'
 				cli_arguments["importobjects"] = '-destinationfolder "' + custom_objects[runSdfExec.object_type][2] + '" [SCRIPTID] -type "' + custom_objects[runSdfExec.object_type][1] + '"'
 				SdfExec.run_shell_command(self.args, self.view, cli_commands[selected_id], cli_arguments, custom_objects[runSdfExec.object_type])
 
+			def selectObjectToUpdate( user_command ):
+				if user_command == -1:
+					return
+				file_start = files[ user_command ].rfind(path_var) + 1
+				update_object = files[ user_command ][file_start:-4]
+
+				cli_arguments["update"] = '-scriptid "' + update_object + '"'
+				SdfExec.run_shell_command(self.args, self.view, cli_commands[selected_id], cli_arguments, None)
+
 			if cli_commands[selected_id][0] == "Clear Password":
 				SdfExec.password = ""
-				return
-			if cli_commands[selected_id][2] == "listobjects":
+			elif cli_commands[selected_id][2] == "listobjects":
 				# In this instance, we need to ask the user another question about what type of object
 				sublime.active_window().show_quick_panel(custom_objects, selectObject)
-			if cli_commands[selected_id][2] == "importobjects":
+			elif cli_commands[selected_id][2] == "importobjects":
 				# If someone wants to import an object, they need to pick an object type first
 				sublime.active_window().show_quick_panel(custom_objects, selectObjectToImport)
+			elif cli_commands[selected_id][2] == "update":
+
+				current_file = sublime.active_window().active_view().file_name()
+				parent_folder = current_file.rfind( path_var )
+				current_file = current_file[0:parent_folder]
+				objects_folder = ""
+				while True:
+					if os.path.isdir( current_file + path_var + "Objects" ):
+						objects_folder=current_file + "/Objects"
+						break
+					else:
+						parent_folder = current_file.rfind( path_var )
+						current_file = current_file[0:parent_folder]
+
+				for (root, dirnames, filenames) in os.walk(objects_folder):
+					for name in filenames:
+						if name.find(".xml") >= 0:
+							files.append( path_var + "Objects" + root.replace( objects_folder, "" ) + path_var + name )
+
+				sublime.active_window().show_quick_panel(files, selectObjectToUpdate)
 			else:
 				SdfExec.run_shell_command(self.args, self.view, cli_commands[selected_id], cli_arguments, None)
 
@@ -83,9 +121,10 @@ class SdfExecViewInsertCommand(sublime_plugin.TextCommand):
 
 class SdfExec:
 	password = ""
-	temp_password = ""
-	obscured_password = ""
 	project_folder = ""
+	loading_message = ""
+	show_loader = False
+	kill_loader = False
 
 	def __init__(self):
 		self.output_file = None
@@ -211,12 +250,33 @@ class SdfExec:
 
 		if second_pure_command == "empty":
 			second_pure_command = ""
+
+		if SdfExec.loader_thread.ident == None:
+			SdfExec.loader_thread.start()
+
 		t = Thread(target=SdfExec.execute_shell_command, args=(command, pure_command, working_dir, second_command, second_pure_command, cli_arguments, account_info, custom_object, args, command_options))
 		t.start()
 
 	def check_sdf_command( args, view, edit, currentCommand ):
 		allcontent = sublime.Region(0, view.size())
 		view.replace(edit, allcontent, "adddependencies")
+
+	def display_loader():
+		loading_position=0
+		loading_display=( "[= ]", "[ =]" )
+		starttime = time.time()
+		delay_seconds = 0.5
+		while True:
+			if SdfExec.show_loader:
+				print( SdfExec.loading_message + " " + loading_display[ loading_position ] )
+				sublime.status_message( SdfExec.loading_message + " " + loading_display[ loading_position ] )
+				loading_position = 1 if loading_position == 0 else 0
+			if SdfExec.kill_loader:
+				break
+
+			time.sleep(delay_seconds - ((time.time() - starttime) % delay_seconds))
+
+	loader_thread = Thread(target=display_loader)
 
 	def new_output_file(args, pure_command):
 		if SdfExec.get_setting('debug', args):
@@ -294,13 +354,10 @@ class SdfExec:
 											cwd=working_dir,
 											startupinfo=startupinfo)
 
-		sublime.status_message( "Connecting to NetSuite" )
-		loading_position=0
-		loading_display=( "[= ]", "[ =]" )
+		SdfExec.loading_message = "Connecting to NetSuite"
+		SdfExec.show_loader = True
 
 		while True:
-			sublime.status_message( "Connecting to NetSuite " + loading_display[ loading_position ] )
-			loading_position = 1 if loading_position == 0 else 0
 			console_command.stdin.flush()
 			proc_read = console_command.stdout.readline()
 			if ( pure_command != "adddependencies" ) and (proc_read.find(b"SuiteCloud Development Framework CLI") >= 0 ):
@@ -326,6 +383,8 @@ class SdfExec:
 				console_command.stdout.flush()
 				console_stdout += proc_read.decode("utf-8")
 
+		SdfExec.show_loader = False
+
 		second_command_data = []
 		if second_pure_command != "":
 			second_command_data = SdfExec.parse_output(args, pure_command, console_stdout, custom_object, True)
@@ -336,12 +395,16 @@ class SdfExec:
 			if SdfExec.get_setting('debug', args):
 				print(">>>>>>>>>>>>>>>>>> Shell Exec Debug Finished!")
 
+			SdfExec.kill_loader = True
 			sublime.status_message( "sdfcli command complete" )
 		else:
 			def runSecondCall(user_command):
+				if user_command == -1:
+					return
 				if SdfExec.get_setting('debug', args):
 					print( second_command_data[user_command] )
-				SdfExec.execute_shell_command(second_command, second_pure_command, working_dir, "", "", cli_arguments, account_info, custom_object, args, command_options, second_command_data[user_command].strip())
+				ttwo = Thread(target=SdfExec.execute_shell_command, args=(second_command, second_pure_command, working_dir, "", "", cli_arguments, account_info, custom_object, args, command_options, second_command_data[user_command].strip()))
+				ttwo.start()
 
 			sublime.active_window().show_quick_panel(second_command_data, runSecondCall)
 
@@ -380,23 +443,39 @@ class SdfExec:
 					else:
 						output += line.replace("Enter password:", "") + "\n" # Since "Enter password:" doesn't create a new line, remove it
 		elif command == "listmissingdependencies":
-			print("missing")
+			print_line = False
+			for line in console_stdout.splitlines():
+				if line.find("[INFO]") >= 0:
+					print_line = False
+				if print_line:
+					output += line + "\n"
+				if line.find("Unresolved dependencies:") >= 0:
+					print_line = True
 		elif command == "listobjects":
 			for line in console_stdout.splitlines():
 				if line.find("Enter password:") >= 0:
 					if return_result == True:
-						output.append( line.replace("Enter password:", "") + "\n" )
+						output.append( line.replace("Enter password:", "").replace(custom_object[1] + ":", "") + "\n" )
 					else:
-						output += line.replace("Enter password:", "") + "\n" # Since "Enter password:" doesn't create a new line, remove it
+						output += line.replace("Enter password:", "").replace(custom_object[1] + ":", "") + "\n" # Since "Enter password:" doesn't create a new line, remove it
 				elif line.find(custom_object[1]) >= 0:
 					if return_result == True:
 						output.append( line.replace("Enter password:", "").replace(custom_object[1] + ":", "") + "\n" )
 					else:
 						output += line.replace("Enter password:", "").replace(custom_object[1] + ":", "") + "\n" # Since "Enter password:" doesn't create a new line, remove it
-
+		elif command == "preview":
+			print_line = False
+			for line in console_stdout.splitlines():
+				if line.find("[INFO]") >= 0:
+					print_line = False
+				if print_line:
+					output += line + "\n"
+				if line.find("Enter password:") >= 0:
+					output += line.replace("Enter password:", "") + "\n"
+					print_line = True
 
 		if return_result == True:
 			return output
-		elif command == "listfiles" or command == "listbundles" or command == "listmissingdependencies" or command == "listobjects":
+		elif command == "listfiles" or command == "listbundles" or command == "listmissingdependencies" or command == "listobjects" or command == "preview":
 			view = sublime.Window.new_file( sdf_command_do_gui_instance )
 			view.run_command("insert", {"characters": output})
