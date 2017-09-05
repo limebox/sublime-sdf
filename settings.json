@@ -1,8 +1,4 @@
 {
-	"import_object": [
-		"Enter Script ID",
-		"List Objects"
-	],
 	"cli_arguments": {
 			"adddependencies": "-all",
 			"deploy": "",

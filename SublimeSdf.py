@@ -44,7 +44,6 @@ class SdfExecRun(sublime_plugin.TextCommand):
 		with open( settings_file ) as json_data:
 			d = json.load(json_data)
 
-			import_object = d["import_object"]
 			cli_arguments = d["cli_arguments"]
 			custom_objects = d["custom_objects"]
 			cli_commands = d["cli_commands"]

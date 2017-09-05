@@ -1,3 +1,3 @@
 # Sublime SDF
 
-### forked from https://github.com/gbaptista/sublime-3-shell-exec to leverage the shell command code
+This plugin requires you to install the SDFCLI tool from NetSuite. This will soon be available on Chocolatey (Windows) and Brew (Mac)
