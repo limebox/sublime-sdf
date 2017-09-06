@@ -59,6 +59,7 @@ class SdfExecRun(sublime_plugin.TextCommand):
 
 			def selectObject(user_command):
 				if user_command == -1:
+					print("Bye")
 					return
 				cli_arguments["listobjects"] = '-type "' + custom_objects[user_command][1] + '"'
 				SdfExec.run_shell_command(self.args, self.view, cli_commands[selected_id], cli_arguments, custom_objects[user_command])
@@ -170,7 +171,6 @@ class SdfExec:
 		project_command = project_command + '"' + SdfExec.project_folder + '"'
 
 		account_info = {}
-		commands = {}
 
 		if sublime.platform() == 'windows':
 			command = command.replace('/', '\\')
@@ -193,9 +193,8 @@ class SdfExec:
 				data = line.split("=")
 				account_info[ data[0] ] = data[1].rstrip('\n')
 
-				if data[0] != "password":
-					options = options + " -" + data[0] + ' "' + account_info[ data[0] ] + '"'
-					sub_options = sub_options + " -" + data[0] + ' "' + account_info[ data[0] ] + '"'
+				options = options + " -" + data[0] + ' "' + account_info[ data[0] ] + '"'
+				sub_options = sub_options + " -" + data[0] + ' "' + account_info[ data[0] ] + '"'
 		else:
 			view = sublime.Window.new_file( sublime.active_window() )
 			output = ["Either you are not in a file that exists in an SDF project or you have not created a file named .sdf","Make sure you are executing SDF from within a NetSuite project.","The following are the required lines in your .sdf file, this should be saved in the root folder of your SDF project: ","------------------------","account=","email=","role=(ID of SDF Enabled Row, traditionally role=3)","url=","------------------------"]
@@ -215,21 +214,6 @@ class SdfExec:
 			command = command.replace( pure_command, "listobjects" )
 			second_pure_command = pure_command
 			pure_command = "listobjects"
-
-		commands[ "adddependencies" ] = ["YES", ""]
-		commands[ "deploy" ] = ["YES", ""]
-		commands[ "importbundle" ] = ["YES", ""]
-		commands[ "importfiles" ] = [account_info["password"],"YES"]
-		commands[ "importobjects" ] = ["YES", ""]
-		commands[ "listbundles" ] = ["YES", ""]
-		commands[ "listfiles" ] = [account_info["password"], ""]
-		commands[ "listmissingdependencies" ] = ["YES", ""]
-		commands[ "listobjects" ] = ["YES", ""]
-		commands[ "preview" ] = ["YES", ""]
-		commands[ "update" ] = ["YES", ""]
-		commands[ "updatecustomrecordwithinstances" ] = ["YES", ""]
-		commands[ "validate" ] = ["YES", ""]
-		commands[ "empty" ] = []
 
 		newline = "\n"
 		window_echo = " && echo "
@@ -270,7 +254,6 @@ class SdfExec:
 				loading_position = 1 if loading_position == 0 else 0
 			if SdfExec.kill_loader:
 				break
-
 			time.sleep(delay_seconds - ((time.time() - starttime) % delay_seconds))
 
 	loader_thread = Thread(target=display_loader)
@@ -313,6 +296,7 @@ class SdfExec:
 	def execute_shell_command(command, pure_command, working_dir, second_command, second_pure_command, cli_arguments, account_info, custom_object, args, command_options, second_command_response = "", return_error=True, stdin=None):
 
 		code = command
+		has_error = False
 
 		if second_command_response != "":
 			code = code.replace("importfiles", 'importfiles -paths "' + second_command_response + '"')
@@ -354,14 +338,19 @@ class SdfExec:
 		SdfExec.loading_message = "Connecting to NetSuite"
 		SdfExec.show_loader = True
 
+
 		while True:
 			console_command.stdin.flush()
 			proc_read = console_command.stdout.readline()
 			if ( pure_command != "adddependencies" ) and (proc_read.find(b"SuiteCloud Development Framework CLI") >= 0 ):
-				password_line = account_info["password"] + '\n'
+				password_line = SdfExec.password + '\n'
 				console_command.stdin.write( str.encode( password_line ) )
 
-			if (proc_read.find(b"Type YES to continue") >= 0) or ( proc_read.find(b"Type YES to update the manifest file") >= 0 ):
+			if (
+				(proc_read.find(b"Type YES to continue") >= 0)
+				or ( proc_read.find(b"Type YES to update the manifest file") >= 0)
+				or ( proc_read.find(b"Proceed with deploy?") >= 0)
+				):
 				console_command.stdin.write(b'YES\n')
 
 			if (proc_read.find(b"BUILD SUCCESS") >= 0):
@@ -371,7 +360,19 @@ class SdfExec:
 			if (proc_read.find(b"must be specified") >= 0):
 				console_command.kill()
 				sublime.status_message( "There was an error with the call, please see the error log." )
-				return
+				has_error=True
+
+			if (proc_read.find(b"were not imported") >= 0):
+				sublime.status_message( "There was an error with the call, please see the error log." )
+				has_error=True
+
+			if (proc_read.find(b"invalid email address or password") >= 0):
+				sublime.status_message( "You have entered an invalid email address or password. Please check your .sdf file and try again" )
+				has_error=True
+				SdfExec.password = "" # Reset the password since it might be invalid
+				console_stdout += proc_read.decode("utf-8")
+				console_stdout = "************** INVALID EMAIL OR PASSWORD **************\n IF YOU TRY TOO MANY TIMES YOU WILL BE LOCKED OUT\n" + console_stdout
+				console_command.kill()
 				break
 
 			if proc_read:
@@ -383,10 +384,13 @@ class SdfExec:
 		SdfExec.show_loader = False
 
 		second_command_data = []
-		if second_pure_command != "":
-			second_command_data = SdfExec.parse_output(args, pure_command, console_stdout, custom_object, True)
+
+		if has_error:
+			SdfExec.parse_output(args, pure_command, console_stdout, custom_object, has_error)
+		elif second_pure_command != "":
+			second_command_data = SdfExec.parse_output(args, pure_command, console_stdout, custom_object, has_error, True)
 		else:
-			SdfExec.parse_output(args, pure_command, console_stdout, custom_object)
+			SdfExec.parse_output(args, pure_command, console_stdout, custom_object, has_error)
 
 		if second_pure_command == "":
 			if SdfExec.get_setting('debug', args):
@@ -417,7 +421,7 @@ class SdfExec:
 			settings = sublime.load_settings('SublimeSdf.sublime-settings')
 			return settings.get('sdf_exec_' + config)
 
-	def parse_output(args, command, console_stdout, custom_object, return_result=False):
+	def parse_output(args, command, console_stdout, custom_object, has_error, return_result=False):
 
 		sdf_command_do_gui_instance = sublime.active_window()
 		if return_result == True:
@@ -425,7 +429,11 @@ class SdfExec:
 		else:
 			output = ""
 
-		if command == "listfiles":
+		if has_error:
+			for line in console_stdout.splitlines():
+				if line.find("[INFO]") < 0:
+					output += line + "\n"
+		elif command == "listfiles":
 			for line in console_stdout.splitlines():
 				if line.find('/SuiteScripts') >= 0:
 					if return_result == True:
@@ -460,19 +468,14 @@ class SdfExec:
 						output.append( line.replace("Enter password:", "").replace(custom_object[1] + ":", "") + "\n" )
 					else:
 						output += line.replace("Enter password:", "").replace(custom_object[1] + ":", "") + "\n" # Since "Enter password:" doesn't create a new line, remove it
-		elif command == "preview":
+		elif command == "preview" or command == "validate":
 			print_line = False
 			for line in console_stdout.splitlines():
-				if line.find("[INFO]") >= 0:
-					print_line = False
-				if print_line:
-					output += line + "\n"
-				if line.find("Enter password:") >= 0:
+				if line.find("[INFO]") < 0:
 					output += line.replace("Enter password:", "") + "\n"
-					print_line = True
 
 		if return_result == True:
 			return output
-		elif command == "listfiles" or command == "listbundles" or command == "listmissingdependencies" or command == "listobjects" or command == "preview":
+		elif has_error or command == "listfiles" or command == "listbundles" or command == "listmissingdependencies" or command == "listobjects" or command == "preview" or command == "validate":
 			view = sublime.Window.new_file( sdf_command_do_gui_instance )
 			view.run_command("insert", {"characters": output})
