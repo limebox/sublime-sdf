@@ -1,18 +1,18 @@
 {
 	"cli_arguments": {
-			"adddependencies": "-all",
-			"deploy": "",
+			"adddependencies": "-p \"[PROJECT_FOLDER]\" -all",
+			"deploy": "-p \"[PROJECT_FOLDER]\"",
 			"importbundle": "",
-			"importfiles": "",
-			"importobjects": "",
+			"importfiles": "-p \"[PROJECT_FOLDER]\"",
+			"importobjects": "-p \"[PROJECT_FOLDER]\"",
 			"listbundles": "",
 			"listfiles": "-folder \"/SuiteScripts\"",
-			"listmissingdependencies": "",
-			"listobjects": "",
-			"preview": "",
-			"update": "",
-			"updatecustomrecordwithinstances": "",
-			"validate": "-server"
+			"listmissingdependencies": "-p \"[PROJECT_FOLDER]\"",
+			"listobjects": "-p \"[PROJECT_FOLDER]\"",
+			"preview": "-p \"[PROJECT_FOLDER]\"",
+			"update": "-p \"[PROJECT_FOLDER]\"",
+			"updatecustomrecordwithinstances": "-p \"[PROJECT_FOLDER]\"",
+			"validate": "-p \"[PROJECT_FOLDER]\" -server"
 	},
 	"custom_objects": [
 		[

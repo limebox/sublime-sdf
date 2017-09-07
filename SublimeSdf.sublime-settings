@@ -12,9 +12,5 @@
   "sdf_exec_output_word_wrap": true,
 
   // Enable or Disable the Debug infos (for plugin developers).
-  "sdf_exec_debug": false,
-
-  // Defines the foldername of the SDF project where the command should be executed
-  // This is the name of the folder where you store the .sdf file
-  "sdf_exec_context": "Customizations"
+  "sdf_exec_debug": true,
 }
