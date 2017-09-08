@@ -1,7 +1,8 @@
 {
-  // sdfcli executable, default is sdfcli.
+  // sdfcli executable, default is sdfcli. This is the only setting the plugin cares about for normal functionality.
   "sdf_exec_cli_executable": "sdfcli",
 
+  // The following settings are only valid if you need to debug the plugin.
   // The output of the command can be shown on the Panel or in a New File: "panel", "file" or "none".
   "sdf_exec_output": "panel",
 
@@ -12,5 +13,5 @@
   "sdf_exec_output_word_wrap": true,
 
   // Enable or Disable the Debug infos (for plugin developers).
-  "sdf_exec_debug": false,
+  "sdf_exec_debug": false
 }

@@ -19,10 +19,10 @@ class SdfExecOpen(sublime_plugin.TextCommand):
 
 		def get_password( user_password ):
 			if( len(user_password) != len(SdfExecOpen.temp_password) ):
-				chg = user_password.replace("*", "")
 				if  len(user_password) < len(SdfExecOpen.temp_password):
 					SdfExecOpen.temp_password = SdfExecOpen.temp_password[:len(user_password)]
 				else:
+					chg = user_password[len( SdfExecOpen.temp_password ):]
 					SdfExecOpen.temp_password = SdfExecOpen.temp_password + chg
 				stars = "*" * len(user_password)
 				sublime.active_window().show_input_panel("NetSuite Password", stars, run_programm, get_password, None)
@@ -177,7 +177,14 @@ class SdfExec:
 			while True:
 				sdfFile = SdfExec.project_folder + "/.sdf"
 				if os.path.isfile( sdfFile ):
-					break
+					if os.path.isfile( SdfExec.project_folder + "/manifest.xml" ):
+						break
+					else:
+						manifest_file = open( SdfExec.project_folder + "/manifest.xml","w+" )
+						project_name = SdfExec.project_folder[ SdfExec.project_folder.rfind( path_var ) + 1 : ]
+						manifest_file.write("<manifest projecttype=\"ACCOUNTCUSTOMIZATION\">\n  <projectname>" + project_name + "</projectname>\n  <frameworkversion>1.0</frameworkversion>\n</manifest>")
+						manifest_file.close()
+						break
 
 				if current_depth > depth_allow:
 					view = sublime.Window.new_file( sublime.active_window() )
