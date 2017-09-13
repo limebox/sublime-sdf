@@ -156,7 +156,7 @@
 		[
 			"Scheduled Scripts",
 			"scheduledscript",
-			"/Objects/ScheduledScript",
+			"/Objects/Scripts/Scheduled",
 			"customscript"
 		],
 		[

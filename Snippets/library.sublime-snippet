@@ -1,0 +1,23 @@
+<snippet>
+	<content><![CDATA[
+/**
+ *@NApiVersion 2.x
+ */
+define([ ${1:Libraries} ],
+
+function( ${2:Library Variables} ) {
+
+	function ${3:myLibraryFunction}() {
+
+		$4
+
+	};
+
+	return {
+		${3} : ${3}
+	};
+});
+]]></content>
+	<tabTrigger>library</tabTrigger>
+	<scope>source.js</scope>
+</snippet>

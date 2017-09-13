@@ -1,0 +1,40 @@
+<snippet>
+	<content><![CDATA[
+/**
+ *@NApiVersion 2.x
+ *@NScriptType UserEventScript
+ */
+
+define([ ${1:Libraries} ],
+
+function( ${2:Library Variables} ) {
+
+	function beforeLoad(context) {
+
+		$3
+
+	};
+
+	function beforeSubmit(context) {
+
+
+
+	};
+
+	function afterSubmit(context) {
+
+
+
+	};
+
+	return {
+		beforeLoad : beforeLoad,
+		beforeSubmit : beforeSubmit,
+		afterSubmit : afterSubmit
+	};
+
+});
+]]></content>
+	<tabTrigger>userevent</tabTrigger>
+	<scope>source.js</scope>
+</snippet>

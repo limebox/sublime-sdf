@@ -1,0 +1,47 @@
+<snippet>
+	<content><![CDATA[
+/**
+ *@NApiVersion 2.x
+ *@NScriptType Restlet
+ */
+
+define([ ${1:Libraries} ],
+
+function( ${2:Library Variables} ) {
+
+	function create(context) {
+
+		$3
+
+	};
+
+	function read(context) {
+
+
+
+	};
+
+	function update(context) {
+
+
+
+	};
+
+	function del( context ) {
+
+
+
+	};
+
+	return {
+		post : create,
+		get : read,
+		put : update,
+		delete : del
+	};
+
+});
+]]></content>
+	<tabTrigger>restlet</tabTrigger>
+	<scope>source.js</scope>
+</snippet>

@@ -14,7 +14,7 @@ class SdfExecOpen(sublime_plugin.TextCommand):
 		self.args = args
 
 		def run_programm( user_password ):
-			SdfExec.password = SdfExecOpen.temp_password
+			SdfExec.password[ SdfExec.active_account ] = SdfExecOpen.temp_password
 			SdfExecRun.run(self, edit, **args)
 
 		def get_password( user_password ):
@@ -27,11 +27,11 @@ class SdfExecOpen(sublime_plugin.TextCommand):
 				stars = "*" * len(user_password)
 				sublime.active_window().show_input_panel("NetSuite Password", stars, run_programm, get_password, None)
 
-		if SdfExec.password == "":
-			sublime.active_window().show_input_panel("NetSuite Password", "", None, get_password, None)
-		else:
-			SdfExecRun.run(self, edit, **args)
-
+		if SdfExec.get_sdf_file():
+			if SdfExec.active_account not in SdfExec.password:
+				sublime.active_window().show_input_panel("NetSuite Password", "", None, get_password, None)
+			else:
+				SdfExecRun.run(self, edit, **args)
 
 class SdfExecRun(sublime_plugin.TextCommand):
 	def run(self, edit, **args):
@@ -81,7 +81,7 @@ class SdfExecRun(sublime_plugin.TextCommand):
 				SdfExec.run_shell_command(self.args, self.view, cli_commands[selected_id], cli_arguments, None)
 
 			if cli_commands[selected_id][0] == "Clear Password":
-				SdfExec.password = ""
+				SdfExec.password = {}
 			elif cli_commands[selected_id][2] == "listobjects":
 				# In this instance, we need to ask the user another question about what type of object
 				sublime.active_window().show_quick_panel(custom_objects, selectObject)
@@ -118,47 +118,19 @@ class SdfExecViewInsertCommand(sublime_plugin.TextCommand):
 		self.view.insert(edit, pos, text)
 
 class SdfExec:
-	password = ""
+	password = {}
 	project_folder = ""
 	loading_message = ""
 	show_loader = False
 	kill_loader = False
+	account_info = {}
+	active_account = ""
 
 	def __init__(self):
 		self.output_file = None
 		self.panel_output = None
 
-	def command_variables(args, view, command, format=True):
-		if format and args.get("format"):
-			command = args["format"].replace('${input}', command)
-
-		for region in view.sel():
-			(row,col) = view.rowcol(view.sel()[0].begin())
-
-			command = command.replace('${row}', str(row+1))
-			command = command.replace('${region}', view.substr(region))
-			break
-
-		# packages, platform, file, file_path, file_name, file_base_name,
-		# file_extension, folder, project, project_path, project_name,
-		# project_base_name, project_extension.
-		command = sublime.expand_variables(command, sublime.active_window().extract_variables())
-
-		return command
-
-	def run_shell_command(args, view, command_options, cli_arguments, custom_object):
-
-		command =	SdfExec.get_setting('cli_executable', args) + " " + SdfExec.command_variables(args, view, command_options[2])
-		project_command = SdfExec.get_setting('cli_executable', args) + " project -p "
-		if 'folder' in sublime.active_window().extract_variables():
-			if sublime.platform() == 'windows':
-				pure_command = SdfExec.command_variables(args, view, command_options[2]).replace(sublime.active_window().extract_variables()['folder'] + '\\', '')
-			else:
-				pure_command = SdfExec.command_variables(args, view, command_options[2]).replace(sublime.active_window().extract_variables()['folder'] + '/', '')
-		else:
-			pure_command = SdfExec.command_variables(args, view, command_options[2])
-
-
+	def get_sdf_file():
 		if sublime.active_window().active_view().file_name():
 			current_file = sublime.active_window().active_view().file_name()
 
@@ -190,7 +162,7 @@ class SdfExec:
 					view = sublime.Window.new_file( sublime.active_window() )
 					output = ["Either you are not in a file that exists in an SDF project or you have not created a file named .sdf","Make sure you are executing SDF from within a NetSuite project.","The following are the required lines in your .sdf file, this should be saved in the root folder of your SDF project: ","------------------------","account=","email=","role=(ID of SDF Enabled Row, traditionally role=3)","url=","------------------------"]
 					view.run_command("insert", {"characters": "\n".join(output)})
-					return
+					return False
 
 				# Set the project folder to the next level
 				parent_location = SdfExec.project_folder.rfind( path_var )
@@ -198,15 +170,56 @@ class SdfExec:
 
 				current_depth = current_depth + 1
 
+			temp_account_info = {}
+			current_account = ""
+
+			for line in open( sdfFile ):
+				data = line.split("=")
+				temp_account_info[ data[0] ] = data[1].rstrip('\n')
+
+				if data[0] == "account":
+					current_account = data[1].rstrip('\n')
+
+			SdfExec.active_account = current_account
+			SdfExec.account_info[ current_account ] = temp_account_info
+			return True
 		else:
 			view = sublime.Window.new_file( sublime.active_window() )
 			output = ["You must have a tab open connected to your NetSuite Project"]
 			view.run_command("insert", {"characters": "\n".join(output)})
-			return
+			return False
+
+	def command_variables(args, view, command, format=True):
+		if format and args.get("format"):
+			command = args["format"].replace('${input}', command)
+
+		for region in view.sel():
+			(row,col) = view.rowcol(view.sel()[0].begin())
+
+			command = command.replace('${row}', str(row+1))
+			command = command.replace('${region}', view.substr(region))
+			break
+
+		# packages, platform, file, file_path, file_name, file_base_name,
+		# file_extension, folder, project, project_path, project_name,
+		# project_base_name, project_extension.
+		command = sublime.expand_variables(command, sublime.active_window().extract_variables())
+
+		return command
+
+	def run_shell_command(args, view, command_options, cli_arguments, custom_object):
+
+		command =	SdfExec.get_setting('cli_executable', args) + " " + SdfExec.command_variables(args, view, command_options[2])
+		project_command = SdfExec.get_setting('cli_executable', args) + " project -p "
+		if 'folder' in sublime.active_window().extract_variables():
+			if sublime.platform() == 'windows':
+				pure_command = SdfExec.command_variables(args, view, command_options[2]).replace(sublime.active_window().extract_variables()['folder'] + '\\', '')
+			else:
+				pure_command = SdfExec.command_variables(args, view, command_options[2]).replace(sublime.active_window().extract_variables()['folder'] + '/', '')
+		else:
+			pure_command = SdfExec.command_variables(args, view, command_options[2])
 
 		project_command = project_command + '"' + SdfExec.project_folder + '"'
-
-		account_info = {}
 
 		if sublime.platform() == 'windows':
 			command = command.replace('/', '\\')
@@ -227,13 +240,9 @@ class SdfExec:
 		else:
 			options = cli_arguments[ pure_command ]
 
-		for line in open( sdfFile ):
-			data = line.split("=")
-			account_info[ data[0] ] = data[1].rstrip('\n')
-
-			options = options + " -" + data[0] + ' "' + account_info[ data[0] ] + '"'
-			sub_options = sub_options + " -" + data[0] + ' "' + account_info[ data[0] ] + '"'
-
+		for item in SdfExec.account_info[ SdfExec.active_account ]:
+			options = options + " -" + item + ' "' + SdfExec.account_info[ SdfExec.active_account ][ item ] + '"'
+			sub_options = sub_options + " -" + item + ' "' + SdfExec.account_info[ SdfExec.active_account ][ item ] + '"'
 
 		second_command = ""
 		second_pure_command = "empty"
@@ -270,7 +279,7 @@ class SdfExec:
 		if SdfExec.loader_thread.ident == None:
 			SdfExec.loader_thread.start()
 
-		t = Thread(target=SdfExec.execute_shell_command, args=(command, pure_command, working_dir, second_command, second_pure_command, cli_arguments, account_info, custom_object, args, command_options))
+		t = Thread(target=SdfExec.execute_shell_command, args=(command, pure_command, working_dir, second_command, second_pure_command, cli_arguments, custom_object, args, command_options))
 		t.start()
 
 	def check_sdf_command( args, view, edit, currentCommand ):
@@ -327,7 +336,7 @@ class SdfExec:
 				sublime.active_window().run_command('show_panel', {"panel": "console", "toggle": False})
 			sys.stdout.write(value)
 
-	def execute_shell_command(command, pure_command, working_dir, second_command, second_pure_command, cli_arguments, account_info, custom_object, args, command_options, second_command_response = "", return_error=True, stdin=None):
+	def execute_shell_command(command, pure_command, working_dir, second_command, second_pure_command, cli_arguments, custom_object, args, command_options, second_command_response = "", return_error=True, stdin=None):
 
 		code = command
 		has_error = False
@@ -340,6 +349,17 @@ class SdfExec:
 			directory = working_dir + custom_object[2]
 			if not os.path.exists(directory):
 				os.makedirs(directory)
+		elif pure_command == "adddependencies":
+			# Since the manifest might have old information, let's reset it
+			if os.name == 'nt':
+				path_var = "\\"
+			else:
+				path_var = "/"
+
+			manifest_file = open( SdfExec.project_folder + "/manifest.xml","w+" )
+			project_name = SdfExec.project_folder[ SdfExec.project_folder.rfind( path_var ) + 1 : ]
+			manifest_file.write("<manifest projecttype=\"ACCOUNTCUSTOMIZATION\">\n  <projectname>" + project_name + "</projectname>\n  <frameworkversion>1.0</frameworkversion>\n</manifest>")
+			manifest_file.close()
 
 		sdf_command_do_gui_instance = SdfExec()
 
@@ -377,11 +397,12 @@ class SdfExec:
 			console_command.stdin.flush()
 			proc_read = console_command.stdout.readline()
 			if ( pure_command != "adddependencies" ) and (proc_read.find(b"SuiteCloud Development Framework CLI") >= 0 ):
-				password_line = SdfExec.password + '\n'
+				password_line = SdfExec.password[ SdfExec.active_account ] + '\n'
 				console_command.stdin.write( str.encode( password_line ) )
 
 			if (
 				(proc_read.find(b"Type YES to continue") >= 0)
+				or (proc_read.find(b"enter YES to continue") >= 0)
 				or ( proc_read.find(b"Type YES to update the manifest file") >= 0)
 				or ( proc_read.find(b"Proceed with deploy?") >= 0)
 				):
@@ -391,12 +412,12 @@ class SdfExec:
 				console_command.kill()
 				break
 
-			if (proc_read.find(b"must be specified") >= 0):
+			if ( (proc_read.find(b"must be specified") >= 0) or (proc_read.find(b"Installation FAILED") >= 0) ):
 				console_command.kill()
 				sublime.status_message( "There was an error with the call, please see the error log." )
 				has_error=True
 
-			if (proc_read.find(b"were not imported") >= 0):
+			if ( (proc_read.find(b"were not imported") >= 0) or (proc_read.find(b"A file upload error occurred") >= 0) ):
 				sublime.status_message( "There was an error with the call, please see the error log." )
 				has_error=True
 
@@ -441,11 +462,10 @@ class SdfExec:
 
 				data_to_get = second_command_data[user_command].strip()
 				if data_to_get == "All":
-					print("Get All: " + second_command_data[user_command])
 					second_command_data.pop(0)
 					data_to_get = " ".join( second_command_data ).strip().replace("\n", "")
 
-				ttwo = Thread(target=SdfExec.execute_shell_command, args=(second_command, second_pure_command, working_dir, "", "", cli_arguments, account_info, custom_object, args, command_options, data_to_get))
+				ttwo = Thread(target=SdfExec.execute_shell_command, args=(second_command, second_pure_command, working_dir, "", "", cli_arguments, custom_object, args, command_options, data_to_get))
 				ttwo.start()
 
 			sublime.active_window().show_quick_panel(second_command_data, runSecondCall)

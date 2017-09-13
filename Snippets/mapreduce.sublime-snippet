@@ -1,0 +1,45 @@
+<snippet>
+	<content><![CDATA[
+/**
+ *@NApiVersion 2.x
+ *@NScriptType MapReduceScript
+ */
+define([ ${1:Libraries} ],
+
+function( ${2:Library Variables} ) {
+
+	function getInputData( context ) {
+
+
+
+	};
+
+	function map( context ) {
+
+
+
+	};
+
+	function reduce( context ) {
+
+
+
+	};
+
+	function summarize( context ) {
+
+
+
+	};
+
+	return {
+		getInputData: getInputData,
+		map: map,
+		reduce: reduce,
+		summarize: summarize
+	};
+});
+]]></content>
+	<tabTrigger>mapreduce</tabTrigger>
+	<scope>source.js</scope>
+</snippet>

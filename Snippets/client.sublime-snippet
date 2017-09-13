@@ -1,0 +1,90 @@
+<snippet>
+	<content><![CDATA[
+/**
+ *@NApiVersion 2.x
+ *@NScriptType ClientScript
+ */
+
+define([ ${1:Libraries} ],
+
+function( ${2:Library Variables} ) {
+
+	function fieldChanged( context ) {
+
+		$3
+
+	};
+
+	function lineInit( context ) {
+
+
+
+	};
+
+	function pageInit( context ) {
+
+
+
+	};
+
+	function postSourcing( context ) {
+
+
+
+	};
+
+	function saveRecord( context ) {
+
+
+
+	};
+
+	function sublistChanged( context ) {
+
+
+
+	};
+
+	function validateDelete( context ) {
+
+
+
+	};
+
+	function validateField( context ) {
+
+
+
+	};
+
+	function validateInsert( context ) {
+
+
+
+	};
+
+	function validateLine( context ) {
+
+
+
+	};
+
+
+	return {
+		fieldChanged : fieldChanged,
+		lineInit : lineInit,
+		pageInit : pageInit,
+		postSourcing : postSourcing,
+		saveRecord : saveRecord,
+		sublistChanged : sublistChanged,
+		validateDelete : validateDelete,
+		validateField : validateField,
+		validateInsert : validateInsert,
+		validateLine : validateLine
+	};
+
+});
+]]></content>
+	<tabTrigger>client</tabTrigger>
+	<scope>source.js</scope>
+</snippet>

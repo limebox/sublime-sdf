@@ -1,0 +1,26 @@
+<snippet>
+	<content><![CDATA[
+/**
+ *@NApiVersion 2.x
+ *@NScriptType Suitelet
+ */
+
+define([ ${1:Libraries} ],
+
+function( ${2:Library Variables} ) {
+
+	function onRequest(context) {
+
+		$3
+
+	};
+
+	return {
+		onRequest : onRequest
+	};
+
+});
+]]></content>
+	<tabTrigger>suitelet</tabTrigger>
+	<scope>source.js</scope>
+</snippet>
