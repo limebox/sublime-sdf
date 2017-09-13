@@ -1,5 +1,9 @@
 # Sublime SDF
 
+Please forgive how bad the code is. I was focused on getting it out quickly more than making it look pretty. Making it prettier will be a priority after official release.
+
+If you find any bugs, feel free to report them in the issues section of github.
+
 This plugin requires you to install the SDFCLI tool from NetSuite.
 
 # Windows
