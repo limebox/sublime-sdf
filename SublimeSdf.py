@@ -295,8 +295,6 @@ class SdfExec:
 			if SdfExec.show_loader:
 				sublime.status_message( SdfExec.loading_message + " " + loading_display[ loading_position ] )
 				loading_position = 1 if loading_position == 0 else 0
-			if SdfExec.kill_loader:
-				break
 			time.sleep(delay_seconds - ((time.time() - starttime) % delay_seconds))
 
 	loader_thread = Thread(target=display_loader)
@@ -393,6 +391,7 @@ class SdfExec:
 		SdfExec.show_loader = True
 
 
+		line_continue=0
 		while True:
 			console_command.stdin.flush()
 			proc_read = console_command.stdout.readline()
@@ -412,19 +411,28 @@ class SdfExec:
 				console_command.kill()
 				break
 
-			if ( (proc_read.find(b"must be specified") >= 0) or (proc_read.find(b"Installation FAILED") >= 0) ):
+			if (
+				(proc_read.find(b"must be specified") >= 0)
+				or (proc_read.find(b"Installation FAILED") >= 0)
+				or (proc_read.find(b"Unknown host.") >= 0)
+				or ( proc_read.find(b"The remote server returned an error") >= 0 )
+				or (proc_read.find(b"Partial Content") >= 0) ):
 				console_command.kill()
 				sublime.status_message( "There was an error with the call, please see the error log." )
 				has_error=True
+				line_continue=2
 
-			if ( (proc_read.find(b"were not imported") >= 0) or (proc_read.find(b"A file upload error occurred") >= 0) ):
+			if (
+				( proc_read.find(b"were not imported") >= 0 )
+				or ( proc_read.find(b"A file upload error occurred") >= 0 )
+				or ( proc_read.find(b"Unable to connect to server") >= 0 )):
 				sublime.status_message( "There was an error with the call, please see the error log." )
 				has_error=True
 
 			if (proc_read.find(b"invalid email address or password") >= 0):
 				sublime.status_message( "You have entered an invalid email address or password. Please check your .sdf file and try again" )
 				has_error=True
-				SdfExec.password = "" # Reset the password since it might be invalid
+				SdfExec.password[ SdfExec.active_account ] = "" # Reset the password since it might be invalid
 				console_stdout += proc_read.decode("utf-8")
 				console_stdout = "************** INVALID EMAIL OR PASSWORD **************\n IF YOU TRY TOO MANY TIMES YOU WILL BE LOCKED OUT\n" + console_stdout
 				console_command.kill()
@@ -435,6 +443,11 @@ class SdfExec:
 					print( proc_read.decode("utf-8").strip() )
 				console_command.stdout.flush()
 				console_stdout += proc_read.decode("utf-8")
+
+			if has_error and line_continue <= 0:
+				break
+			elif has_error:
+				line_continue = line_continue - 1
 
 		SdfExec.show_loader = False
 
