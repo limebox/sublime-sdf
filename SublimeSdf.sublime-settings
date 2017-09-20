@@ -13,5 +13,5 @@
   "sdf_exec_output_word_wrap": true,
 
   // Enable or Disable the Debug infos (for plugin developers).
-  "sdf_exec_debug": true
+  "sdf_exec_debug": false
 }
