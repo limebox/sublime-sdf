@@ -79,8 +79,6 @@ class Commands(sublime_plugin.TextCommand):
 
 				sublime.active_window().show_quick_panel(files, selectObjectToUpdate)
 			else:
-				print( "Selected ID: " + str(selected_id) )
-				print( cli_arguments )
 				Sdf.prepare_command(self.args, self.view, cli_commands[selected_id], cli_arguments, None)
 
 		sublime.active_window().show_quick_panel(cli_commands, runSdfExec)

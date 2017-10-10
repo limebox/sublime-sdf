@@ -1,7 +1,7 @@
 {
 	"cli_arguments": {
 			"adddependencies": "-p \"[PROJECT_FOLDER]\" -all",
-			"deploy": "-p \"[PROJECT_FOLDER]\"",
+			"deploy": "-np -p \"[PROJECT_FOLDER]\"",
 			"importbundle": "",
 			"importfiles": "-p \"[PROJECT_FOLDER]\"",
 			"importobjects": "-p \"[PROJECT_FOLDER]\"",
