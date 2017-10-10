@@ -3,6 +3,10 @@
 ### Authors Note
 Please forgive how bad the code is. I was focused on getting it out quickly more than making it look pretty. Making it prettier will be a priority after official release.
 
+### Thank you
+Thank you PackageControl.io for listing the NetSuite SDF package:
+https://packagecontrol.io/packages/NetSuite%20SDF
+
 If you find any bugs, feel free to report them in the issues section of github.
 
 # SDFCLI
