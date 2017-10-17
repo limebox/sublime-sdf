@@ -1,5 +1,6 @@
 import sublime, sublime_plugin, os, json
 from .Settings import *
+from .Config import *
 from .Sdf import *
 
 
@@ -8,14 +9,9 @@ class Commands(sublime_plugin.TextCommand):
 		if Settings.get_setting('debug', self.args):
 			print("\n\n>>>>>>>>>>>>>>>>>> Start Shell Exec Debug:")
 
-		settings_file = os.path.abspath(os.path.dirname(__file__)) + "/../settings.json"
-
-		with open( settings_file ) as json_data:
-			d = json.load(json_data)
-
-			cli_arguments = d["cli_arguments"]
-			custom_objects = d["custom_objects"]
-			cli_commands = d["cli_commands"]
+		cli_arguments = Config.get("cli_arguments")
+		custom_objects = Config.get("custom_objects")
+		cli_commands = Config.get("cli_commands")
 
 		def runSdfExec(user_command):
 			selected_id = user_command

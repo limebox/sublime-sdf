@@ -36,7 +36,7 @@ class SdfExecOpen(sublime_plugin.TextCommand):
 				sublime.active_window().show_input_panel("NetSuite Password", stars, run_programm, get_password, None)
 
 		if Settings.get_sdf_file():
-			if Settings.active_account not in Settings.password and "password" not in Settings.account_info[ Settings.active_account ]:
+			if Settings.active_account not in Settings.password and "password" not in Settings.account_info[ Settings.active_account ] and Settings.account_info[ Settings.active_account ][ "password" ] != "":
 				sublime.active_window().show_input_panel("NetSuite Password", "", None, get_password, None)
 			else:
 				Commands.run(self, edit, **args)
