@@ -242,6 +242,7 @@ class Sdf:
 		if len(Sdf.threads) > 1 and len(Sdf.threads) > Sdf.current_thread + 1:
 			Sdf.current_thread = Sdf.current_thread + 1
 			Sdf.threads[ Sdf.current_thread ].start()
+
 		if second_pure_command == "":
 			if Settings.get_setting('debug', args):
 				print(">>>>>>>>>>>>>>>>>> Shell Exec Debug Finished!")
@@ -271,7 +272,6 @@ class Sdf:
 					sub_array_length = 100
 					total_objects = len( acceptable_files )
 					array_length = int( math.ceil( float(total_objects) / float(sub_array_length)) )
-					Sdf.threads = []
 
 					for i in range(0, array_length):
 						start = i * sub_array_length
@@ -283,7 +283,7 @@ class Sdf:
 					if len( failed_files ) > 0:
 						Output.parse_output(args, second_command, "These files:\n" + ",".join(failed_files) + "Have characters not permitted by SDF.\nCharacters cannot be: (" + ",".join( bad_characters ) + ")", custom_object, True)
 
-					Sdf.current_thread = 0;
+					Sdf.current_thread = Sdf.current_thread + 1
 					Sdf.threads[ Sdf.current_thread ].start()
 
 				else:
@@ -291,6 +291,7 @@ class Sdf:
 						Output.parse_output(args, second_command, "The requested file: " + data_to_get + "\nHas characters not permitted by SDF. Characters cannot be: (" + ",".join( bad_characters ) + ")", custom_object, True)
 					else:
 						Sdf.threads.append( Thread(target=Sdf.execute_sdf_command, args=(second_command, second_pure_command, working_dir, "", "", cli_arguments, custom_object, args, command_options, data_to_get)) )
-						Sdf.threads[0].start()
+						Sdf.current_thread = Sdf.current_thread + 1
+						Sdf.threads[ Sdf.current_thread ].start()
 
 			sublime.active_window().show_quick_panel(second_command_data, runSecondCall)
