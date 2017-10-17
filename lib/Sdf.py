@@ -37,6 +37,10 @@ class Sdf:
 
 	def prepare_command(args, view, command_options, cli_arguments, custom_object):
 
+		# Reset threads
+		Sdf.threads = []
+		Sdf.current_thread = -1
+
 		command =	Settings.get_setting('cli_executable', args) + " " + Sdf.command_variables(args, view, command_options[2])
 		project_command = Settings.get_setting('cli_executable', args) + " project -p "
 		if 'folder' in sublime.active_window().extract_variables():

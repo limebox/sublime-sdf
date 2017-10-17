@@ -9,14 +9,18 @@ class Commands(sublime_plugin.TextCommand):
 		if Settings.get_setting('debug', self.args):
 			print("\n\n>>>>>>>>>>>>>>>>>> Start Shell Exec Debug:")
 
-		cli_arguments = Config.get("cli_arguments")
 		custom_objects = Config.get("custom_objects")
 		cli_commands = Config.get("cli_commands")
+		cli_arguments = Config.get("cli_arguments")
 
 		def runSdfExec(user_command):
 			selected_id = user_command
 			object_type = 0
 			files = []
+			reset_cli_arguments = {}
+
+			for argument in cli_arguments:
+				reset_cli_arguments[ argument ] = cli_arguments[ argument ]
 
 			if os.name == 'nt':
 				path_var = "\\"
@@ -26,16 +30,16 @@ class Commands(sublime_plugin.TextCommand):
 			def selectObject(user_command):
 				if user_command == -1:
 					return
-				cli_arguments["listobjects"] = '-type "' + custom_objects[user_command][1] + '"'
-				Sdf.prepare_command(self.args, self.view, cli_commands[selected_id], cli_arguments, custom_objects[user_command])
+				reset_cli_arguments["listobjects"] = '-type "' + custom_objects[user_command][1] + '"'
+				Sdf.prepare_command(self.args, self.view, cli_commands[selected_id], reset_cli_arguments, custom_objects[user_command])
 
 			def selectObjectToImport(user_command):
 				if user_command == -1:
 					return
 				runSdfExec.object_type=user_command
-				cli_arguments["listobjects"] = '-type "' + custom_objects[runSdfExec.object_type][1] + '"'
-				cli_arguments["importobjects"] = cli_arguments["importobjects"] +  ' -destinationfolder "' + custom_objects[runSdfExec.object_type][2] + '" [SCRIPTID] -type "' + custom_objects[runSdfExec.object_type][1] + '"'
-				Sdf.prepare_command(self.args, self.view, cli_commands[selected_id], cli_arguments, custom_objects[runSdfExec.object_type])
+				reset_cli_arguments["listobjects"] = '-type "' + custom_objects[runSdfExec.object_type][1] + '"'
+				reset_cli_arguments["importobjects"] = reset_cli_arguments["importobjects"] +  ' -destinationfolder "' + custom_objects[runSdfExec.object_type][2] + '" [SCRIPTID] -type "' + custom_objects[runSdfExec.object_type][1] + '"'
+				Sdf.prepare_command(self.args, self.view, cli_commands[selected_id], reset_cli_arguments, custom_objects[runSdfExec.object_type])
 
 			def selectObjectToUpdate( user_command ):
 				if user_command == -1:
@@ -43,8 +47,8 @@ class Commands(sublime_plugin.TextCommand):
 				file_start = files[ user_command ].rfind(path_var) + 1
 				update_object = files[ user_command ][file_start:-4]
 
-				cli_arguments["update"] = '-scriptid "' + update_object + '"'
-				Sdf.prepare_command(self.args, self.view, cli_commands[selected_id], cli_arguments, None)
+				reset_cli_arguments["update"] = '-scriptid "' + update_object + '"'
+				Sdf.prepare_command(self.args, self.view, cli_commands[selected_id], reset_cli_arguments, None)
 
 			if cli_commands[selected_id][0] == "Clear Password":
 				Settings.password = {}
@@ -75,6 +79,6 @@ class Commands(sublime_plugin.TextCommand):
 
 				sublime.active_window().show_quick_panel(files, selectObjectToUpdate)
 			else:
-				Sdf.prepare_command(self.args, self.view, cli_commands[selected_id], cli_arguments, None)
+				Sdf.prepare_command(self.args, self.view, cli_commands[selected_id], reset_cli_arguments, None)
 
 		sublime.active_window().show_quick_panel(cli_commands, runSdfExec)
