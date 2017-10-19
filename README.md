@@ -17,12 +17,12 @@ The source for Chocolatey and Brew can be found here: https://github.com/limebox
 ## Windows
 Install via [Chocolatey](https://chocolatey.org)
 ```bash
-choco install sdfcli
+choco install sdfcli # This installs Java 8 and Maven 3.5
 ```
 
 ## Mac
 Install via [Homebrew](https://brew.sh)
 ```bash
-brew cask install java # Unless you already have Java installed
+brew cask install caskroom/versions/java8 # Unless you already have Java installed. Note, Java 9 is not yet supported.
 brew install limebox/netsuite/sdfcli
 ```
