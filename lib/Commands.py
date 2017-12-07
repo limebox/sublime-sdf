@@ -47,7 +47,10 @@ class Commands(sublime_plugin.TextCommand):
 				file_start = files[ user_command ].rfind(path_var) + 1
 				update_object = files[ user_command ][file_start:-4]
 
-				reset_cli_arguments["update"] = '-scriptid "' + update_object + '"'
+				if cli_commands[selected_id][2] == "updatecustomrecordwithinstances":
+					reset_cli_arguments["updatecustomrecordwithinstances"] += ' -scriptid "' + update_object + '"'
+				else:
+					reset_cli_arguments["update"] += ' -scriptid "' + update_object + '"'
 				Sdf.prepare_command(self.args, self.view, cli_commands[selected_id], reset_cli_arguments, None)
 
 			if cli_commands[selected_id][0] == "Clear Password":
@@ -58,15 +61,21 @@ class Commands(sublime_plugin.TextCommand):
 			elif cli_commands[selected_id][2] == "importobjects":
 				# If someone wants to import an object, they need to pick an object type first
 				sublime.active_window().show_quick_panel(custom_objects, selectObjectToImport)
-			elif cli_commands[selected_id][2] == "update":
+			elif ( cli_commands[selected_id][2] == "update" or cli_commands[selected_id][2] == "updatecustomrecordwithinstances" ):
 
 				current_file = sublime.active_window().active_view().file_name()
 				parent_folder = current_file.rfind( path_var )
 				current_file = current_file[0:parent_folder]
 				objects_folder = ""
 				while True:
-					if os.path.isdir( current_file + path_var + "Objects" ):
-						objects_folder=current_file + "/Objects"
+
+					if cli_commands[selected_id][2] == "updatecustomrecordwithinstances":
+						testDir = current_file + path_var + "Objects" + path_var + "Records"
+					else:
+						testDir = current_file + path_var + "Objects"
+
+					if os.path.isdir( testDir ):
+						objects_folder=testDir
 						break
 					else:
 						parent_folder = current_file.rfind( path_var )

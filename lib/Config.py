@@ -84,9 +84,15 @@ class Config():
 				"custentity"
 			],
 			[
-				"Forms",
-				"form",
-				"/Objects/Forms",
+				"Entity Forms",
+				"entryForm",
+				"/Objects/Forms/EntryForm",
+				"custform"
+			],
+			[
+				"Transaction Forms",
+				"transactionForm",
+				"/Objects/Forms/TransactionForm",
 				"custform"
 			],
 			[
