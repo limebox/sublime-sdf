@@ -204,6 +204,13 @@ class Sdf:
 				has_error=True
 				line_continue=2
 
+			if (proc_read.find(b"Invalid account specified") >= 0 ):
+				has_error=True
+				console_stdout += proc_read.decode("utf-8")
+				console_stdout = "************** INVALID ACCOUNT SPECIFIED **************\n Please update your .sdf file and use the proper account #\n" + console_stdout
+				console_command.kill();
+				break;
+
 			if (
 				( proc_read.find(b"were not imported") >= 0 )
 				or ( proc_read.find(b"A file upload error occurred") >= 0 )
