@@ -208,8 +208,15 @@ class Sdf:
 				has_error=True
 				console_stdout += proc_read.decode("utf-8")
 				console_stdout = "************** INVALID ACCOUNT SPECIFIED **************\n Please update your .sdf file and use the proper account #\n" + console_stdout
-				console_command.kill();
-				break;
+				console_command.kill()
+				break
+
+			if (proc_read.find(b"not enabled in this account") >= 0 ):
+				has_error=True
+				console_stdout += proc_read.decode("utf-8")
+				console_stdout = "************** Token Based Authentication Feature Not Enabled **************\n Please enable Token Based Authentication in 'Enable Features' #\n" + console_stdout
+				console_command.kill()
+				break
 
 			if (
 				( proc_read.find(b"were not imported") >= 0 )
