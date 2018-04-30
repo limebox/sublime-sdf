@@ -41,7 +41,7 @@ class Sdf:
 		Sdf.threads = []
 		Sdf.current_thread = -1
 
-		command =	Settings.get_setting('cli_executable', args) + " " + Sdf.command_variables(args, view, command_options[2])
+		command = Settings.get_setting('cli_executable', args) + Settings.sdfcli_ext + " " + Sdf.command_variables(args, view, command_options[2])
 		project_command = Settings.get_setting('cli_executable', args) + " project -p "
 		if 'folder' in sublime.active_window().extract_variables():
 			if sublime.platform() == 'windows':
@@ -177,7 +177,7 @@ class Sdf:
 		while True:
 			console_command.stdin.flush()
 			proc_read = console_command.stdout.readline()
-			if ( pure_command != "adddependencies" ) and (proc_read.find(b"SuiteCloud Development Framework CLI") >= 0 ):
+			if ( proc_read.find(b"Using user credentials.") >= 0 ):
 				password_line = Settings.password[ Settings.active_account ] + '\n'
 				console_command.stdin.write( str.encode( password_line ) )
 

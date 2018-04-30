@@ -3,6 +3,7 @@ import sublime, os
 class Settings:
 	account_info = {}
 	password = {}
+	sdfcli_ext = ""
 	project_folder = ""
 	active_account = ""
 
@@ -23,8 +24,10 @@ class Settings:
 
 			if os.name == 'nt':
 				path_var = "\\"
+				Settings.sdfcli_ext = ".bat"
 			else:
 				path_var = "/"
+				Settings.sdfcli_ext = ""
 
 			parent_location = current_file.rfind( path_var )
 			Settings.project_folder = current_file[:parent_location]
