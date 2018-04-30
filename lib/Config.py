@@ -4,14 +4,17 @@ class Config():
 		"cli_arguments": {
 				"adddependencies": "-p \"[PROJECT_FOLDER]\" -all",
 				"deploy": "-np -p \"[PROJECT_FOLDER]\"",
-				"importbundle": "",
+				"importbundle": "-p \"[PROJECT_FOLDER]\"",
+				"importconfiguration": "-p \"[PROJECT_FOLDER]\" -configurationid FEATURES:ALL_FEATURES",
 				"importfiles": "-p \"[PROJECT_FOLDER]\"",
 				"importobjects": "-p \"[PROJECT_FOLDER]\"",
+				"issuetoken": "",
 				"listbundles": "",
 				"listfiles": "-folder \"/SuiteScripts\"",
 				"listmissingdependencies": "-p \"[PROJECT_FOLDER]\"",
 				"listobjects": "-p \"[PROJECT_FOLDER]\"",
 				"preview": "-p \"[PROJECT_FOLDER]\"",
+				"revoketoken": "",
 				"update": "-p \"[PROJECT_FOLDER]\"",
 				"updatecustomrecordwithinstances": "-p \"[PROJECT_FOLDER]\"",
 				"validate": "-p \"[PROJECT_FOLDER]\" -server"
@@ -227,6 +230,11 @@ class Config():
 				"importbundle"
 			],
 			[
+				"Import Configuration",
+				"Imports the feature configuration from your NetSuite account to the account customization project so that you can enable or disable features in the project.",
+				"importconfiguration"
+			],
+			[
 				"Import Files",
 				"Imports files from your NetSuite account to the account customization project.",
 				"importfiles"
@@ -235,6 +243,11 @@ class Config():
 				"Import Objects",
 				"Imports custom objects from your NetSuite account to the SuiteCloud project.",
 				"importobjects"
+			],
+			[
+				"Issue Token",
+				"Issues a TBA token to authenticate against your NetSuite Production account.",
+				"issuetoken"
 			],
 			[
 				"List Bundles",
@@ -260,6 +273,11 @@ class Config():
 				"Preview",
 				"Previews the deployment steps of a folder or zip file that contains the SuiteCloud project.",
 				"preview"
+			],
+			[
+				"Revoke Token",
+				"Revokes the latest TBA token that was issued to your NetSuite Production account using the issuetoken command.",
+				"revoketoken"
 			],
 			[
 				"Update",
