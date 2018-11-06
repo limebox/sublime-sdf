@@ -237,6 +237,13 @@ class Sdf:
 				console_command.kill()
 				break
 
+			if (proc_read.find(b"An error occurred during deploy file validation") >= 0 ):
+				has_error=True
+				console_stdout += proc_read.decode("utf-8")
+				console_stdout = "************** DEPLOY FILE VALIDATION ERROR **************\n Your deploy.xml file contains an invalid reference to a file or object.\n" + console_stdout
+				console_command.kill()
+				break
+
 			if proc_read:
 				if Settings.get_setting('debug', args):
 					print( proc_read.decode("utf-8").strip() )
