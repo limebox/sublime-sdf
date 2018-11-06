@@ -12,6 +12,6 @@
   // Enable or Disable the word wrap at the Output File.
   "sdf_exec_output_word_wrap": true,
 
-  // Enable or Disable the Debug infos (for plugin developers).
+  // Enable or Disable the Debug info.
   "sdf_exec_debug": true
 }
