@@ -253,7 +253,7 @@ class Sdf:
 		second_command_data = []
 
 		if has_error:
-			Output.parse_output(args, pure_command, console_stdout, custom_object, has_error, False, Settings.get_setting('debug', self.args))
+			Output.parse_output(args, pure_command, console_stdout, custom_object, has_error, False, Settings.get_setting('debug', args))
 		elif second_pure_command != "":
 			second_command_data = Output.parse_output(args, pure_command, console_stdout, custom_object, has_error, True)
 		else:
