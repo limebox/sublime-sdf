@@ -65,6 +65,7 @@ class Output:
 
 		if return_result == True:
 			return output
-		elif has_error or command == "listfiles" or command == "listbundles" or command == "listmissingdependencies" or command == "listobjects" or command == "preview" or command == "validate":
+		elif ( has_error and Settings.get_setting('debug', self.args) == False ) or command == "listfiles" or command == "listbundles" or command == "listmissingdependencies" or command == "listobjects" or command == "preview" or command == "validate":
+			# We check to see if debug is turned on, if so, we don't need to output errors (only lists).
 			view = sublime.Window.new_file( sdf_command_do_gui_instance )
 			view.run_command("insert", {"characters": output})

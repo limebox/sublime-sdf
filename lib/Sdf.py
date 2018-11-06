@@ -174,6 +174,8 @@ class Sdf:
 
 
 		line_continue=0
+
+		# Looping through the lines. This will also look at each line and determine if we need to output the error.
 		while True:
 			console_command.stdin.flush()
 			proc_read = console_command.stdout.readline()
