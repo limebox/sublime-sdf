@@ -1,8 +1,8 @@
 <snippet>
 	<content><![CDATA[
 /**
- *@NApiVersion 2.x
- *@NScriptType Suitelet
+ * @NApiVersion 2.x
+ * @NScriptType Suitelet
  */
 
 define([ ${1:Libraries} ],

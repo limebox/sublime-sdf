@@ -1,9 +1,10 @@
 <snippet>
 	<content><![CDATA[
 /**
- *@NApiVersion 2.x
- *@NScriptType MapReduceScript
+ * @NApiVersion 2.x
+ * @NScriptType MapReduceScript
  */
+
 define([ ${1:Libraries} ],
 
 function( ${2:Library Variables} ) {

@@ -1,8 +1,9 @@
 <snippet>
 	<content><![CDATA[
 /**
- *@NApiVersion 2.x
+ * @NApiVersion 2.x
  */
+
 define([ ${1:Libraries} ],
 
 function( ${2:Library Variables} ) {
