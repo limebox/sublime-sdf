@@ -23,19 +23,19 @@ class Config():
 			[
 				"Bundle Installation Script",
 				"bundleinstallationscript",
-				"/Objects/BundleInstallation",
+				"/Objects/Scripts/BundleInstallation",
 				"customscript"
 			],
 			[
 				"Centers",
 				"center",
-				"/Objects/CentersAndTabs/Centers",
+				"/Objects/CentersAndTabs/Center",
 				"custcenter"
 			],
 			[
 				"Center Categories",
 				"centercategory",
-				"/Objects/CentersAndTabs/Categories",
+				"/Objects/CentersAndTabs/Category",
 				"custcentercategory"
 			],
 			[
@@ -89,13 +89,13 @@ class Config():
 			[
 				"Entity Forms",
 				"entryForm",
-				"/Objects/Forms/EntryForm",
+				"/Objects/Forms/Entry",
 				"custform"
 			],
 			[
 				"Transaction Forms",
 				"transactionForm",
-				"/Objects/Forms/TransactionForm",
+				"/Objects/Forms/Transaction",
 				"custform"
 			],
 			[
