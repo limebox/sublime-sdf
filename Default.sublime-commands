@@ -2,5 +2,9 @@
   {
     "caption": "SDF Exec: Open",
     "command": "sdf_exec_open"
+  },
+  {
+  	"caption": "SDF Exec: Create Project",
+  	"command": "sdf_exec_create_project"
   }
 ]

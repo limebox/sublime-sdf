@@ -8,6 +8,7 @@ for mod in reload_mods:
 
 from .lib.Commands import *
 from .lib.Settings import *
+from .lib.Create import *
 
 
 # For anyone examining my code, please forgive how unforgivably bad this is.
@@ -44,3 +45,10 @@ class SdfExecOpen(sublime_plugin.TextCommand):
 class SdfExecViewInsertCommand(sublime_plugin.TextCommand):
 	def run(self, edit, pos, text):
 		self.view.insert(edit, pos, text)
+
+class SdfExecCreateProject(sublime_plugin.WindowCommand):
+
+	def run(self, paths = []):
+		path = paths[ 0 ]
+
+		Create.project( path )

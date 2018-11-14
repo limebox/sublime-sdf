@@ -1,0 +1,11 @@
+[
+	{
+		"caption": "NetSuite SDF",
+		"id": "sdf_exec_menu",
+		"children":
+		[
+			{"command": "sdf_exec_open", "caption": "SDF Menu", "id": "sdf_exec_open"},
+			{"command": "sdf_exec_create_project", "caption": "Create SDF Project", "id": "sdf_exec_create_project", "args": {"paths": []} }
+		]
+	}
+]
