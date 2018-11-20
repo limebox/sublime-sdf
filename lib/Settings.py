@@ -18,7 +18,7 @@ class Settings:
 			settings = sublime.load_settings('SublimeSdf.sublime-settings')
 			return settings.get('sdf_exec_' + config)
 
-	def get_sdf_file():
+	def get_sdf_file( execute_command ):
 		if sublime.active_window().active_view().file_name():
 			current_file = sublime.active_window().active_view().file_name()
 
@@ -37,7 +37,13 @@ class Settings:
 			sdfFile = ""
 
 			while True:
-				sdfFile = Settings.project_folder + "/.sdf"
+				print( Settings.project_folder )
+				for file in os.listdir( Settings.project_folder ):
+					print( file )
+					if file.endswith(".sdf"):
+						sdfFile = Settings.project_folder + "/" + file
+						break
+
 				if os.path.isfile( sdfFile ):
 					if os.path.isfile( Settings.project_folder + "/manifest.xml" ):
 						break
@@ -60,22 +66,52 @@ class Settings:
 
 				current_depth = current_depth + 1
 
-			temp_account_info = {}
-			current_account = ""
+			# We need to see if the user has multiple .sdf files
+			print( "Check Environment" )
+			os.chdir( Settings.project_folder )
 
-			for line in open( sdfFile ):
-				data = line.split("=")
-				temp_account_info[ data[0] ] = data[1].rstrip('\n')
+			sdf_files = []
+			env_list = []
+			sdf_file = ""
+			env_file = ""
 
-				if data[0] == "account":
-					current_account = data[1].rstrip('\n')
+			# Check SDF Files, if there is only one, then we just move on
+			for file in os.listdir( Settings.project_folder ):
+				if file == '.sdf':
+					return file
+				if file.endswith(".sdf"):
+					env_list.append( file.replace('.sdf', "").replace('.', '').capitalize() )
+					sdf_files.append( file )
 
-			Settings.active_account = current_account
-			Settings.account_info[ current_account ] = temp_account_info
+			def set_file( user_command ):
+				if user_command == -1:
+					return False
+				else:
+					print( sdf_files[ user_command ] )
+					os.rename( Settings.project_folder + "/" + sdf_files[ user_command ], Settings.project_folder + "/.sdf")
+					env_file = sdf_files[ user_command ]
+					sdfFile = Settings.project_folder + "/.sdf"
 
-			if "password" in temp_account_info:
-				Settings.password[ current_account ] = temp_account_info["password"]
-			return True
+					temp_account_info = {}
+					current_account = ""
+
+					for line in open( sdfFile ):
+						data = line.split("=")
+						temp_account_info[ data[0] ] = data[1].rstrip('\n')
+
+						if data[0] == "account":
+							current_account = data[1].rstrip('\n')
+
+					Settings.active_account = current_account
+					Settings.account_info[ current_account ] = temp_account_info
+
+					if "password" in temp_account_info:
+						Settings.password[ current_account ] = temp_account_info["password"]
+
+				execute_command( env_file )
+
+			sublime.active_window().show_quick_panel( env_list, set_file )
+
 		else:
 			view = sublime.Window.new_file( sublime.active_window() )
 			output = ["You must have a tab open connected to your NetSuite Project"]
