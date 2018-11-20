@@ -5,7 +5,7 @@ from .Sdf import *
 
 
 class Commands(sublime_plugin.TextCommand):
-	def run(self, edit, **args, envFile):
+	def run(self, edit, **args):
 		if Settings.get_setting('debug', self.args):
 			print("\n\n>>>>>>>>>>>>>>>>>> Start Shell Exec Debug:")
 

@@ -36,13 +36,11 @@ class SdfExecOpen(sublime_plugin.TextCommand):
 				stars = "*" * len(user_password)
 				sublime.active_window().show_input_panel("NetSuite Password", stars, run_programm, get_password, None)
 
-		def execute_command( envFile ):
-			if envFile != False:
-				if Settings.active_account not in Settings.password and ("password" not in Settings.account_info[ Settings.active_account ] or Settings.account_info[ Settings.active_account ][ "password" ] != ""):
-					sublime.active_window().show_input_panel("NetSuite Password", "", None, get_password, None)
-				else:
-					Commands.run(self, edit, **args, envFile)
-					print( "Done, time to reset file" )
+		def execute_command():
+			if Settings.active_account not in Settings.password and ("password" not in Settings.account_info[ Settings.active_account ] or Settings.account_info[ Settings.active_account ][ "password" ] != ""):
+				sublime.active_window().show_input_panel("NetSuite Password", "", None, get_password, None)
+			else:
+				Commands.run(self, edit, **args)
 
 		Settings.get_sdf_file( execute_command )
 
