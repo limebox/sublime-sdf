@@ -79,7 +79,12 @@ class Settings:
 					sdf_file = file
 					break
 				if file.endswith(".sdf"):
-					env_list.append( file.replace('.sdf', "").replace('.', '').capitalize() )
+					environment = file.replace('.sdf', "").replace('.', '').capitalize()
+					project_start = Settings.project_folder.rfind( path_var )
+					project = Settings.project_folder[project_start + 1:]
+					project_location = Settings.project_folder.replace(project, "")
+
+					env_list.append( [ environment, "Environment File: " + file, "Project: " + project, "Project Location: " + project_location ] )
 					sdf_files.append( file )
 
 			def set_account_info( sdfFile ):
