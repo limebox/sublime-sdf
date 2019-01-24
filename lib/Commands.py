@@ -5,16 +5,45 @@ from .Sdf import *
 
 
 class Commands(sublime_plugin.TextCommand):
-	def run(self, edit, **args):
-		if Settings.get_setting('debug', self.args):
-			print("\n\n>>>>>>>>>>>>>>>>>> Start Shell Exec Debug:")
 
-		custom_objects = Config.get("custom_objects")
-		cli_commands = Config.get("cli_commands")
-		cli_arguments = Config.get("cli_arguments")
+	def run(self, edit, action = False):
+
+		# This will need to be moved to check for password
+		# def get_password( user_password ):
+		# 	if( len(user_password) != len(SdfExecOpen.temp_password) ):
+		# 		if  len(user_password) < len(SdfExecOpen.temp_password):
+		# 			SdfExecOpen.temp_password = SdfExecOpen.temp_password[:len(user_password)]
+		# 		else:
+		# 			chg = user_password[len( SdfExecOpen.temp_password ):]
+		# 			SdfExecOpen.temp_password = SdfExecOpen.temp_password + chg
+		# 		stars = "*" * len(user_password)
+		# 		sublime.active_window().show_input_panel("NetSuite Password", stars, run_programm, get_password, None)
+
+		# if Settings.active_account not in Settings.password and ("password" not in Settings.account_info[ Settings.active_account ] or Settings.account_info[ Settings.active_account ][ "password" ] != ""):
+		# 	sublime.active_window().show_input_panel("NetSuite Password", "", None, get_password, None)
 
 		def runSdfExec(user_command):
-			selected_id = user_command
+
+			print("\n\n>>>>>>>>>>>>>>>>>> Initiate NetSuite SDF:")
+
+			custom_objects = Config.get("custom_objects")
+			cli_commands = Config.get("cli_commands")
+			cli_arguments = Config.get("cli_arguments")
+
+			selected_id = None
+
+			if isinstance(user_command, int):
+				selected_id = user_command
+			else:
+				i = 0
+				command_length = len( cli_commands )
+				while i < command_length:
+					if user_command == cli_commands[ i ][2]:
+						selected_id = i
+						break;
+					else:
+						i += 1
+
 			object_type = 0
 			files = []
 			reset_cli_arguments = {}
@@ -31,7 +60,7 @@ class Commands(sublime_plugin.TextCommand):
 				if user_command == -1:
 					return
 				reset_cli_arguments["listobjects"] = '-type "' + custom_objects[user_command][1] + '"'
-				Sdf.prepare_command(self.args, self.view, cli_commands[selected_id], reset_cli_arguments, custom_objects[user_command])
+				Sdf.prepare_command(self, self.view, cli_commands[selected_id], reset_cli_arguments, custom_objects[user_command])
 
 			def selectObjectToImport(user_command):
 				if user_command == -1:
@@ -39,7 +68,7 @@ class Commands(sublime_plugin.TextCommand):
 				runSdfExec.object_type=user_command
 				reset_cli_arguments["listobjects"] = '-type "' + custom_objects[runSdfExec.object_type][1] + '"'
 				reset_cli_arguments["importobjects"] = reset_cli_arguments["importobjects"] +  ' -destinationfolder "' + custom_objects[runSdfExec.object_type][2] + '" [SCRIPTID] -type "' + custom_objects[runSdfExec.object_type][1] + '"'
-				Sdf.prepare_command(self.args, self.view, cli_commands[selected_id], reset_cli_arguments, custom_objects[runSdfExec.object_type])
+				Sdf.prepare_command(self, self.view, cli_commands[selected_id], reset_cli_arguments, custom_objects[runSdfExec.object_type])
 
 			def selectObjectToUpdate( user_command ):
 				if user_command == -1:
@@ -51,7 +80,7 @@ class Commands(sublime_plugin.TextCommand):
 					reset_cli_arguments["updatecustomrecordwithinstances"] += ' -scriptid "' + update_object + '"'
 				else:
 					reset_cli_arguments["update"] += ' -scriptid "' + update_object + '"'
-				Sdf.prepare_command(self.args, self.view, cli_commands[selected_id], reset_cli_arguments, None)
+				Sdf.prepare_command(self, self.view, cli_commands[selected_id], reset_cli_arguments, None)
 
 			if cli_commands[selected_id][0] == "Clear Password":
 				Settings.password = {}
@@ -88,6 +117,9 @@ class Commands(sublime_plugin.TextCommand):
 
 				sublime.active_window().show_quick_panel(files, selectObjectToUpdate)
 			else:
-				Sdf.prepare_command(self.args, self.view, cli_commands[selected_id], reset_cli_arguments, None)
+				Sdf.prepare_command(self, self.view, cli_commands[selected_id], reset_cli_arguments, None)
 
-		sublime.active_window().show_quick_panel(cli_commands, runSdfExec)
+		if action == False:
+			sublime.active_window().show_quick_panel(cli_commands, runSdfExec)
+		else:
+			runSdfExec( action )

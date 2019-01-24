@@ -17,41 +17,44 @@ class Sdf:
 		self.output_file = None
 		self.panel_output = None
 
-	def command_variables(args, view, command, format=True):
-		if format and args.get("format"):
-			command = args["format"].replace('${input}', command)
+	# def command_variables(args, view, command, format=True):
+	# 	if format and args.get("format"):
+	# 		command = args["format"].replace('${input}', command)
 
-		for region in view.sel():
-			(row,col) = view.rowcol(view.sel()[0].begin())
+	# 	for region in view.sel():
+	# 		(row,col) = view.rowcol(view.sel()[0].begin())
 
-			command = command.replace('${row}', str(row+1))
-			command = command.replace('${region}', view.substr(region))
-			break
+	# 		command = command.replace('${row}', str(row+1))
+	# 		command = command.replace('${region}', view.substr(region))
+	# 		break
 
-		# packages, platform, file, file_path, file_name, file_base_name,
-		# file_extension, folder, project, project_path, project_name,
-		# project_base_name, project_extension.
-		command = sublime.expand_variables(command, sublime.active_window().extract_variables())
+	# 	# packages, platform, file, file_path, file_name, file_base_name,
+	# 	# file_extension, folder, project, project_path, project_name,
+	# 	# project_base_name, project_extension.
+	# 	command = sublime.expand_variables(command, sublime.active_window().extract_variables())
 
-		return command
+	# 	return command
 
-	def prepare_command(args, view, command_options, cli_arguments, custom_object):
+	def prepare_command(self, view, command_options, cli_arguments, custom_object):
 
 		# Reset threads
 		Sdf.threads = []
 		Sdf.current_thread = -1
+		args = self.args
 
-		command = Settings.get_setting('cli_executable', args) + Settings.sdfcli_ext + " " + Sdf.command_variables(args, view, command_options[2])
-		project_command = Settings.get_setting('cli_executable', args) + " project -p "
-		if 'folder' in sublime.active_window().extract_variables():
-			if sublime.platform() == 'windows':
-				pure_command = Sdf.command_variables(args, view, command_options[2]).replace(sublime.active_window().extract_variables()['folder'] + '\\', '')
-			else:
-				pure_command = Sdf.command_variables(args, view, command_options[2]).replace(sublime.active_window().extract_variables()['folder'] + '/', '')
-		else:
-			pure_command = Sdf.command_variables(args, view, command_options[2])
+		# command = Settings.get_setting('cli_executable', args) + Settings.sdfcli_ext + " " + Sdf.command_variables(args, view, command_options[2])
+		# project_command = Settings.get_setting('cli_executable', args) + " project -p "
+		# if 'folder' in sublime.active_window().extract_variables():
+		# 	if sublime.platform() == 'windows':
+		# 		pure_command = Sdf.command_variables(args, view, command_options[2]).replace(sublime.active_window().extract_variables()['folder'] + '\\', '')
+		# 	else:
+		# 		pure_command = Sdf.command_variables(args, view, command_options[2]).replace(sublime.active_window().extract_variables()['folder'] + '/', '')
+		# else:
+		# 	pure_command = Sdf.command_variables(args, view, command_options[2])
 
-		project_command = project_command + '"' + Settings.project_folder + '"'
+		pure_command = command_options[2]
+		command = Settings.get_setting('cli_executable', args) + Settings.sdfcli_ext + " " + pure_command
+		project_command = Settings.get_setting('cli_executable', args) + " project -p " + '"' + Settings.project_folder + '"'
 
 		if sublime.platform() == 'windows':
 			command = command.replace('/', '\\')

@@ -14,16 +14,6 @@ class Create:
 
 		working_dir = path
 
-		sdfFile = working_dir + "/.sdf"
-		deployFile = working_dir + "/deploy.xml"
-		manifestFile = working_dir + "/manifest.xml"
-
-		sublime.active_window().run_command('show_panel', {"panel": "console", "toggle": False})
-
-		if ( os.path.isfile( sdfFile ) or os.path.isfile( deployFile ) or os.path.isfile( manifestFile ) ) :
-			print( "\n\n\nSDF Create Project: Not an empty directory" )
-			return False
-
 		if sublime.platform() == 'windows':
 			project_folder = path.rfind('\\')
 		else:

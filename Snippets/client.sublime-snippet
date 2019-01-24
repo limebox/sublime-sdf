@@ -13,59 +13,61 @@ function( ${2:Library Variables} ) {
 
 		$3
 
+
+		return true;
 	};
 
 	function lineInit( context ) {
 
-
+		return true;
 
 	};
 
 	function pageInit( context ) {
 
-
+		return true;
 
 	};
 
 	function postSourcing( context ) {
 
-
+		return true;
 
 	};
 
 	function saveRecord( context ) {
 
-
+		return true;
 
 	};
 
 	function sublistChanged( context ) {
 
-
+		return true;
 
 	};
 
 	function validateDelete( context ) {
 
-
+		return true;
 
 	};
 
 	function validateField( context ) {
 
-
+		return true;
 
 	};
 
 	function validateInsert( context ) {
 
-
+		return true;
 
 	};
 
 	function validateLine( context ) {
 
-
+		return true;
 
 	};
 

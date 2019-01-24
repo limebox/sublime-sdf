@@ -2,10 +2,42 @@
 	{
 		"caption": "NetSuite SDF",
 		"id": "sdf_exec_menu",
+		"command": "sdf_exec_is_sdf_project",
 		"children":
 		[
-			{"command": "sdf_exec_open", "caption": "SDF Menu", "id": "sdf_exec_open"},
-			{"command": "sdf_exec_create_project", "caption": "Create SDF Project", "id": "sdf_exec_create_project", "args": {"paths": []} }
+			{"command": "sdf_exec_open", "caption": "SDF Menu", "id": "sdf_exec_open", "args": {"paths": []} },
+			{"caption": "-"},
+			{"caption": "SDF Actions", "children": [
+				{"command": "sdf_exec_actions", "caption": "Add Dependencies to Manifest", "id": "sdf_exec_add_dependencies_to_manifest", "args": {"paths": [], "action": "sdf_exec_add_dependencies_to_manifest"} },
+				{"command": "sdf_exec_actions", "caption": "Deploy to Account", "id": "sdf_exec_deploy", "args": {"paths": [], "action": "sdf_exec_deploy"} },
+				{"command": "sdf_exec_actions", "caption": "Import Bundle", "id": "sdf_exec_import_bundle", "args": {"paths": [], "action": "sdf_exec_import_bundle"} },
+				{"command": "sdf_exec_actions", "caption": "Import Configuration", "id": "sdf_exec_import_configuration", "args": {"paths": [], "action": "sdf_exec_import_configuration"} },
+				{"command": "sdf_exec_actions", "caption": "Import Files", "id": "sdf_exec_import_file", "args": {"paths": [], "action": "sdf_exec_import_file"} },
+				{"command": "sdf_exec_actions", "caption": "Import Objects", "id": "sdf_exec_import_object", "args": {"paths": [], "action": "sdf_exec_import_object"} },
+				{"command": "sdf_exec_actions", "caption": "Issue Token", "id": "sdf_exec_issue_token", "args": {"paths": [], "action": "sdf_exec_issue_token"} },
+				{"command": "sdf_exec_actions", "caption": "List Bundles", "id": "sdf_exec_list_bundle", "args": {"paths": [], "action": "sdf_exec_list_bundle"} },
+				{"command": "sdf_exec_actions", "caption": "List Files", "id": "sdf_exec_list_files", "args": {"paths": [], "action": "sdf_exec_list_files"} },
+				{"command": "sdf_exec_actions", "caption": "List Missing Dependencies", "id": "sdf_exec_list_missing_dependencies", "args": {"paths": [], "action": "sdf_exec_list_missing_dependencies"} },
+				{"command": "sdf_exec_actions", "caption": "List Objects", "id": "sdf_exec_list_objects", "args": {"paths": [], "action": "sdf_exec_list_objects"} },
+				{"command": "sdf_exec_actions", "caption": "Preview", "id": "sdf_exec_preview", "args": {"paths": [], "action": "sdf_exec_preview"} },
+				{"command": "sdf_exec_actions", "caption": "Revoke Token", "id": "sdf_exec_revoke_token", "args": {"paths": [], "action": "sdf_exec_revoke_token"} },
+				{"command": "sdf_exec_actions", "caption": "Update Object", "id": "sdf_exec_update", "args": {"paths": [], "action": "sdf_exec_update"} },
+				{"command": "sdf_exec_actions", "caption": "Update Custom Record With Instances", "id": "sdf_exec_update_custom_record_with_instances", "args": {"paths": [], "action": "sdf_exec_update_custom_record_with_instances"} },
+				{"command": "sdf_exec_actions", "caption": "Validate Project", "id": "sdf_exec_validate_project", "args": {"paths": [], "action": "sdf_exec_validate_project"} },
+				{"command": "sdf_exec_actions", "caption": "Clear Password", "id": "sdf_exec_clear_password", "args": {"paths": [], "action": "sdf_exec_clear_password"} },
+				{"command": "sdf_exec_not_sdf_project", "caption": "Not An SDF Project", "id": "sdf_exec_not_sdf_project", "args": {"paths": []}}
+			]},
+			{"caption": "-"},
+			{"command": "sdf_exec_actions", "caption": "Create SDF Project", "id": "sdf_exec_create_project", "args": {"paths": [], "action": "sdf_exec_create_project"} },
+			{"command": "sdf_exec_actions", "caption": "Update File From Account", "id": "sdf_exec_download_file", "args": {"paths": [], "action":"sdf_exec_download_file"} },
+			{"command": "sdf_exec_actions", "caption": "Update Object From Account", "id": "sdf_exec_download_object", "args": {"paths": [], "action":"sdf_exec_download_object"} },
+			{"command": "sdf_exec_actions", "caption": "Add To deploy.xml", "id": "sdf_exec_add_to_deploy", "args": {"paths": [], "action":"sdf_exec_add_to_deploy"} },
+			{"command": "sdf_exec_actions", "caption": "Update manifest.xml", "id": "sdf_exec_update_manifest", "args": {"paths": [], "action":"sdf_exec_update_manifest"} },
+			{"command": "sdf_exec_actions", "caption": "Set Password", "id": "sdf_exec_set_password", "args": {"paths": [], "action":"sdf_exec_set_password"} },
+			{"command": "sdf_exec_actions", "caption": "Revoke Password", "id": "sdf_exec_clear_password", "args": {"paths": [], "action":"sdf_exec_clear_password"} },
+			{"command": "sdf_exec_actions", "caption": "Issue Token", "id": "sdf_exec_issue_token", "args": {"paths": [], "action":"sdf_exec_issue_token"} },
+			{"command": "sdf_exec_actions", "caption": "Revoke Token", "id": "sdf_exec_revoke_token", "args": {"paths": [], "action":"sdf_exec_revoke_token"} },
+			{"command": "sdf_exec_not_sdf_project", "caption": "Not An SDF Project", "id": "sdf_exec_not_sdf_project", "args": {"paths": []}}
 		]
 	}
 ]

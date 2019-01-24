@@ -9,15 +9,16 @@ for mod in reload_mods:
 from .lib.Commands import *
 from .lib.Settings import *
 from .lib.Create import *
-
-
-# For anyone examining my code, please forgive how unforgivably bad this is.
-# I've never written in Python before, so this was also a crash course in Python
-# If anyone wants to help contribute to make it better, be my guest
+from .lib.MenuContext import *
+from .lib.Actions import *
 
 class SdfExecOpen(sublime_plugin.TextCommand):
 
 	temp_password = ""
+
+	def is_visible( self, paths = [] ):
+		path = paths[ 0 ]
+		return MenuContext.isSdfProject( path )
 
 	def run(self, edit, **args):
 		self.args = args
@@ -26,21 +27,8 @@ class SdfExecOpen(sublime_plugin.TextCommand):
 			Settings.password[ Settings.active_account ] = SdfExecOpen.temp_password
 			Commands.run(self, edit, **args)
 
-		def get_password( user_password ):
-			if( len(user_password) != len(SdfExecOpen.temp_password) ):
-				if  len(user_password) < len(SdfExecOpen.temp_password):
-					SdfExecOpen.temp_password = SdfExecOpen.temp_password[:len(user_password)]
-				else:
-					chg = user_password[len( SdfExecOpen.temp_password ):]
-					SdfExecOpen.temp_password = SdfExecOpen.temp_password + chg
-				stars = "*" * len(user_password)
-				sublime.active_window().show_input_panel("NetSuite Password", stars, run_programm, get_password, None)
-
 		def execute_command():
-			if Settings.active_account not in Settings.password and ("password" not in Settings.account_info[ Settings.active_account ] or Settings.account_info[ Settings.active_account ][ "password" ] != ""):
-				sublime.active_window().show_input_panel("NetSuite Password", "", None, get_password, None)
-			else:
-				Commands.run(self, edit, **args)
+			Commands.run(self, edit, **args)
 
 		Settings.get_sdf_file( execute_command )
 
@@ -48,9 +36,39 @@ class SdfExecViewInsertCommand(sublime_plugin.TextCommand):
 	def run(self, edit, pos, text):
 		self.view.insert(edit, pos, text)
 
-class SdfExecCreateProject(sublime_plugin.WindowCommand):
+class SdfExecMenu(sublime_plugin.WindowCommand):
 
-	def run(self, paths = []):
+	def is_visible( self, paths = [] ):
 		path = paths[ 0 ]
+		return MenuContext.isSdfProject( path )
 
-		Create.project( path )
+class SdfExecNotSdfProject(sublime_plugin.WindowCommand):
+	def is_visible( self, paths = [] ):
+		path = paths[ 0 ]
+		if MenuContext.isVisible( 'Test', path ):
+			return False
+		else:
+			return True
+
+	def is_enabled( self, paths = [] ):
+		return False
+
+class SdfExecIsSdfProject(sublime_plugin.WindowCommand):
+	def is_visible( self, paths = [] ):
+		path = paths[ 0 ]
+		return MenuContext.isVisible( 'Test', path )
+
+
+class SdfExecActions(sublime_plugin.WindowCommand):
+
+	def is_visible( self, action, paths = [] ):
+		path = paths[ 0 ]
+		return MenuContext.isVisible( action, path )
+
+	def run( self, action, paths = [], **args ):
+		self.args = args
+		self.view = sublime.View
+		edit = sublime.View
+		path = paths[ 0 ]
+		Actions.run( self, edit, action, path )
+		return True
