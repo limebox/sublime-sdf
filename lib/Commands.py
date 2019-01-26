@@ -8,7 +8,6 @@ class Commands():
 
 	actionParameter = None # In case this is called from a file / object, we want to be able to download the file / object directly
 
-	account_settings = Settings.get_setting('account_data', {})
 	temp_password = ""
 
 	custom_objects = Config.get("custom_objects")
@@ -77,9 +76,9 @@ class Commands():
 		def selectObject( userCommand ):
 			if userCommand == -1:
 				return
-			Commands.reset_cli_arguments["listobjects"] = '-type "' + custom_objects[userCommand][1] + '"'
+			Commands.reset_cli_arguments["listobjects"] = '-type "' + Commands.custom_objects[userCommand][1] + '"'
 
-			sdfCallback( 'listobjects', Commands.reset_cli_arguments, custom_objects[user_command])
+			sdfCallback( 'listobjects', Commands.reset_cli_arguments, Commands.custom_objects[user_command])
 
 		sublime.active_window().show_quick_panel(Commands.custom_objects, selectObject)
 		return True
@@ -110,26 +109,13 @@ class Commands():
 			file_to_update = Settings.selected_file.replace('.xml', '')
 			selectObjectToUpdate( file_to_update )
 		else:
-			objects_folder = ""
-			test_dir = Settings.project_folder
-			while True:
-
-				if action == "updatecustomrecordwithinstances":
-					testDir = test_dir + Settings.path_var + "Objects" + Settings.path_var + "Records"
-				else:
-					testDir = test_dir + Settings.path_var + "Objects"
-
-				if os.path.isdir( testDir ):
-					objects_folder=testDir
-					break
-				else:
-					parent_folder = test_dir.rfind( Settings.path_var )
-					test_dir = test_dir[0:parent_folder]
+			objects_folder = Settings.project_folder + Settings.path_var + "Objects"
 
 			for (root, dirnames, filenames) in os.walk(objects_folder):
 				for name in filenames:
-					if name.find(".xml") >= 0:
-						Commands.files.append( Settings.path_var + "Objects" + root.replace( objects_folder, "" ) + Settings.path_var + name )
+					if ( action == "updatecustomrecordwithinstances" and name.startswith("customrecord") ) or ( action == "update" and name.endswith('.xml') ):
+						object_file = Settings.path_var + "Objects" + root.replace( objects_folder, "" ) + Settings.path_var + name
+						Commands.files.append( object_file )
 
 			sublime.active_window().show_quick_panel(Commands.files, selectObjectToUpdate)
 
@@ -208,12 +194,13 @@ class Commands():
 
 		if action == False:
 			Settings.context = "tab"
+			account_settings = Settings.get_setting('account_data', {})
 			for command in Commands.cli_commands:
 
-				if ((command[2] == 'issuetoken' and Settings.active_account in Commands.account_settings)
-					or (command[2] == 'revoketoken' and (Settings.active_account in Commands.account_settings) == False)
-					or (command[2] == 'setpassword' and Settings.active_account in Settings.password)
-					or (command[2] == 'clearpassword' and (Settings.active_account in Settings.password) == False)):
+				if ((command[2] == 'issuetoken' and Settings.active_account in account_settings)
+					or (command[2] == 'revoketoken' and (Settings.active_account in account_settings) == False)
+					or (command[2] == 'setpassword' and ( (Settings.active_account in Settings.password) or (Settings.active_account in account_settings) ) )
+					or (command[2] == 'clearpassword' and ( (Settings.active_account in Settings.password) == False or (Settings.active_account in account_settings) ) ) ):
 					continue
 				else:
 					Commands.adjusted_commands.append( command )

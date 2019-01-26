@@ -13,7 +13,7 @@ class Actions:
 	def run( action, path ):
 		Actions.path = path
 
-		sdf_file_free_actions = ["sdf_exec_create_project", "sdf_exec_reset_deploy", "sdf_exec_add_dependencies_to_manifest", "sdf_exec_add_to_deploy"]
+		sdf_file_free_actions = ["sdf_exec_create_project", "sdf_exec_reset_deploy", "sdf_exec_add_to_deploy"]
 
 		if ( action in sdf_file_free_actions ) == False:
 			execute_command = getattr(Actions, action)
