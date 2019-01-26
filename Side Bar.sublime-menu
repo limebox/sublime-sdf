@@ -24,6 +24,7 @@
 				{"command": "sdf_exec_actions", "caption": "Update Object", "id": "sdf_exec_update", "args": {"paths": [], "action": "sdf_exec_update"} },
 				{"command": "sdf_exec_actions", "caption": "Update Custom Record With Instances", "id": "sdf_exec_update_custom_record_with_instances", "args": {"paths": [], "action": "sdf_exec_update_custom_record_with_instances"} },
 				{"command": "sdf_exec_actions", "caption": "Validate Project", "id": "sdf_exec_validate_project", "args": {"paths": [], "action": "sdf_exec_validate_project"} },
+				{"command": "sdf_exec_actions", "caption": "Set Password", "id": "sdf_exec_set_password", "args": {"paths": [], "action":"sdf_exec_set_password"} },
 				{"command": "sdf_exec_actions", "caption": "Clear Password", "id": "sdf_exec_clear_password", "args": {"paths": [], "action": "sdf_exec_clear_password"} },
 				{"command": "sdf_exec_not_sdf_project", "caption": "Not An SDF Project", "id": "sdf_exec_not_sdf_project", "args": {"paths": []}}
 			]},
@@ -32,9 +33,9 @@
 			{"command": "sdf_exec_actions", "caption": "Update File From Account", "id": "sdf_exec_download_file", "args": {"paths": [], "action":"sdf_exec_download_file"} },
 			{"command": "sdf_exec_actions", "caption": "Update Object From Account", "id": "sdf_exec_download_object", "args": {"paths": [], "action":"sdf_exec_download_object"} },
 			{"command": "sdf_exec_actions", "caption": "Add To deploy.xml", "id": "sdf_exec_add_to_deploy", "args": {"paths": [], "action":"sdf_exec_add_to_deploy"} },
-			{"command": "sdf_exec_actions", "caption": "Update manifest.xml", "id": "sdf_exec_update_manifest", "args": {"paths": [], "action":"sdf_exec_update_manifest"} },
+			{"command": "sdf_exec_actions", "caption": "Update manifest.xml", "id": "sdf_exec_add_dependencies_to_manifest", "args": {"paths": [], "action":"sdf_exec_add_dependencies_to_manifest"} },
 			{"command": "sdf_exec_actions", "caption": "Set Password", "id": "sdf_exec_set_password", "args": {"paths": [], "action":"sdf_exec_set_password"} },
-			{"command": "sdf_exec_actions", "caption": "Revoke Password", "id": "sdf_exec_clear_password", "args": {"paths": [], "action":"sdf_exec_clear_password"} },
+			{"command": "sdf_exec_actions", "caption": "Clear Password", "id": "sdf_exec_clear_password", "args": {"paths": [], "action":"sdf_exec_clear_password"} },
 			{"command": "sdf_exec_actions", "caption": "Issue Token", "id": "sdf_exec_issue_token", "args": {"paths": [], "action":"sdf_exec_issue_token"} },
 			{"command": "sdf_exec_actions", "caption": "Revoke Token", "id": "sdf_exec_revoke_token", "args": {"paths": [], "action":"sdf_exec_revoke_token"} },
 			{"command": "sdf_exec_not_sdf_project", "caption": "Not An SDF Project", "id": "sdf_exec_not_sdf_project", "args": {"paths": []}}

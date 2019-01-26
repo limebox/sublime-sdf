@@ -21,14 +21,9 @@ class SdfExecOpen(sublime_plugin.TextCommand):
 		return MenuContext.isSdfProject( path )
 
 	def run(self, edit, **args):
-		self.args = args
-
-		def run_programm( user_password ):
-			Settings.password[ Settings.active_account ] = SdfExecOpen.temp_password
-			Commands.run(self, edit, **args)
 
 		def execute_command():
-			Commands.run(self, edit, **args)
+			Commands.run()
 
 		Settings.get_sdf_file( execute_command )
 
@@ -66,9 +61,6 @@ class SdfExecActions(sublime_plugin.WindowCommand):
 		return MenuContext.isVisible( action, path )
 
 	def run( self, action, paths = [], **args ):
-		self.args = args
-		self.view = sublime.View
-		edit = sublime.View
 		path = paths[ 0 ]
-		Actions.run( self, edit, action, path )
+		Actions.run( action, path )
 		return True

@@ -3,8 +3,7 @@ from .Settings import *
 
 class Debug:
 	def new_output_file(args, pure_command):
-		if Settings.get_setting('debug', args):
-			print('open new empty file: ' + pure_command)
+
 		output_file = sublime.active_window().new_file()
 		output_file.set_name(pure_command[0:60])
 		output_file.set_scratch(True)

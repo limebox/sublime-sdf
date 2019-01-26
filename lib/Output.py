@@ -4,18 +4,14 @@ from .Settings import *
 
 class Output:
 
-	def parse_output(args, command, console_stdout, custom_object, has_error, return_result=False, debug_output_enabled=False):
+	def parse_output( command, console_stdout, custom_object, return_result=False, debug_output_enabled=True ):
 		sdf_command_do_gui_instance = sublime.active_window()
 		if return_result == True:
 			output = []
 		else:
 			output = ""
 
-		if has_error:
-			for line in console_stdout.splitlines():
-				if line.find("[INFO]") < 0:
-					output += line + "\n"
-		elif command == "listfiles":
+		if command == "listfiles":
 			if return_result == True:
 				output.append( "All" + "\n" )
 
@@ -67,7 +63,7 @@ class Output:
 
 		if return_result == True:
 			return output
-		elif ( has_error and debug_output_enabled == False ) or command == "listfiles" or command == "listbundles" or command == "listmissingdependencies" or command == "listobjects" or command == "preview" or command == "validate":
+		elif ( debug_output_enabled == False ) or command == "listfiles" or command == "listbundles" or command == "listmissingdependencies" or command == "listobjects" or command == "preview" or command == "validate":
 			# We check to see if debug is turned on, if so, we don't need to output errors (only lists).
 			view = sublime.Window.new_file( sdf_command_do_gui_instance )
 			view.run_command("insert", {"characters": output})

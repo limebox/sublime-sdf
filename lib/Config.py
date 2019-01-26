@@ -6,18 +6,18 @@ class Config():
 				"deploy": "-np -p \"[PROJECT_FOLDER]\"",
 				"importbundle": "-p \"[PROJECT_FOLDER]\"",
 				"importconfiguration": "-p \"[PROJECT_FOLDER]\" -configurationid FEATURES:ALL_FEATURES",
-				"importfiles": "-p \"[PROJECT_FOLDER]\"",
+				"importfiles": "-p \"[PROJECT_FOLDER]\" -excludeproperties",
 				"importobjects": "-p \"[PROJECT_FOLDER]\"",
-				"issuetoken": "",
 				"listbundles": "",
 				"listfiles": "-folder \"/SuiteScripts\"",
 				"listmissingdependencies": "-p \"[PROJECT_FOLDER]\"",
 				"listobjects": "-p \"[PROJECT_FOLDER]\"",
 				"preview": "-p \"[PROJECT_FOLDER]\"",
-				"revoketoken": "",
 				"update": "-p \"[PROJECT_FOLDER]\"",
 				"updatecustomrecordwithinstances": "-p \"[PROJECT_FOLDER]\"",
-				"validate": "-p \"[PROJECT_FOLDER]\" -server"
+				"validate": "-p \"[PROJECT_FOLDER]\" -server",
+				"issuetoken": "",
+				"revoketoken": ""
 		},
 		"custom_objects": [
 			[
@@ -245,11 +245,6 @@ class Config():
 				"importobjects"
 			],
 			[
-				"Issue Token",
-				"Issues a TBA token to authenticate against your NetSuite Production account.",
-				"issuetoken"
-			],
-			[
 				"List Bundles",
 				"Lists the customization bundles that were created in your NetSuite account.",
 				"listbundles"
@@ -275,11 +270,6 @@ class Config():
 				"preview"
 			],
 			[
-				"Revoke Token",
-				"Revokes the latest TBA token that was issued to your NetSuite Production account using the issuetoken command.",
-				"revoketoken"
-			],
-			[
 				"Update",
 				"Updates existing custom objects in the SuiteCloud project folder with the custom objects in your NetSuite account.",
 				"update"
@@ -295,9 +285,24 @@ class Config():
 				"validate"
 			],
 			[
+				"Issue Token",
+				"Issues a TBA token to authenticate against your NetSuite Production account.",
+				"issuetoken"
+			],
+			[
+				"Revoke Token",
+				"Revokes the latest TBA token that was issued to your NetSuite Production account using the issuetoken command.",
+				"revoketoken"
+			],
+			[
+				"Set Password",
+				"Sets the password for this environment and session",
+				"setpassword"
+			],
+			[
 				"Clear Password",
-				"Clears the password from this session",
-				""
+				"Clears the password for this environment from this session",
+				"clearpassword"
 			]
 		]
 	}

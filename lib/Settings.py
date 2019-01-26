@@ -1,18 +1,22 @@
-import sublime, os
+import sublime, sublime_plugin, os
 
-class Settings:
+class Settings( sublime_plugin.TextCommand ):
+
+	context = "tab"
 	account_info = {}
 	password = {}
 	sdfcli_ext = ""
 	project_folder = ""
+	selected_file = ""
+	selected_file_path = ""
 	active_account = ""
+	path_var = "/"
+	sdfcli_ext = ""
+	temp_password = ""
 
 	if os.name == 'nt':
 		path_var = "\\"
 		sdfcli_ext = ".bat"
-	else:
-		path_var = "/"
-		sdfcli_ext = ""
 
 	def get_setting(config, args, force_default=False):
 		if (not force_default) and args.get(config):
@@ -23,22 +27,42 @@ class Settings:
 			return settings.get('sdf_exec_' + config)
 		else:
 			settings = sublime.load_settings('SublimeSdf.sublime-settings')
-			return settings.get('sdf_exec_' + config)
+			if settings.get('sdf_exec_' + config):
+				return settings.get('sdf_exec_' + config)
+			else:
+				return args
 
 	def set_setting( setting, value ):
-		settings = sublime.load_settings('SublimeSdf.sublime-settings')
-		setattr(settings, 'sdf_exec_' + setting, value)
+		plugin_settings = sublime.load_settings('SublimeSdf.sublime-settings')
+		#old_setting = plugin_settings.get( 'sdf_exec_' + setting )
+		plugin_settings.set( 'sdf_exec_' + setting, value )
 		sublime.save_settings('SublimeSdf.sublime-settings')
 
-	def get_sdf_file( executeCallback, path = "" ):
+	def setpassword( executeCallback ):
+		def set_password( user_password ):
+			Settings.password[ Settings.active_account ] = Settings.temp_password
+			executeCallback()
 
+		def get_password( user_password ):
+			if( len(user_password) != len(Settings.temp_password) ):
+				if  len(user_password) < len(Settings.temp_password):
+					Settings.temp_password = Settings.temp_password[:len(user_password)]
+				else:
+					chg = user_password[len( Settings.temp_password ):]
+					Settings.temp_password = Settings.temp_password + chg
+				stars = "*" * len(user_password)
+				sublime.active_window().show_input_panel("NetSuite Password", stars, set_password, get_password, None)
+
+		sublime.active_window().show_input_panel("NetSuite Password", "", None, get_password, None)
+
+	def get_sdf_file( executeCallback, path = "" ):
 		root_folder = sublime.active_window().extract_variables()[ 'project_path' ] + Settings.path_var
 
 		if path != "":
 			# This is a request from the context menu and we want to see if an SDF file even exists
 			if os.path.isdir( path ):
 				# If this is a directory, we want to turn it into a fake file 
-				path = path + Settings.path_var + 'not_a_file.txt'
+				path = path + Settings.path_var + 'not_a_file.not_a_file'
 
 			return Settings.get_environment( path, executeCallback, True )
 		elif sublime.active_window().active_view().file_name() is None:
@@ -84,7 +108,6 @@ class Settings:
 
 			if len( sdf_projects ) == 0:
 				# There are no active SDF Projects, now the warning
-				sublime.active_window().run_command('show_panel', {"panel": "console", "toggle": False})
 				view = sublime.Window.new_file( sublime.active_window() )
 				output = ["You must be in a NetSuite SDF Project.", "You can do this by having a file open from an existing project or having one or more SDF Projects in your folder list on the right."]
 				view.run_command("insert", {"characters": "\n".join(output)})
@@ -108,18 +131,28 @@ class Settings:
 	def get_environment( currentFile, executeCallback, justVerify = False ):
 
 		parent_location = currentFile.rfind( Settings.path_var )
+
+		if os.path.isfile( currentFile ):
+			Settings.selected_file_path = currentFile[:parent_location]
+			Settings.selected_file = currentFile[parent_location + 1:]
+
 		Settings.project_folder = currentFile[:parent_location]
 
 		depth_allow = 10
 		current_depth = 0
 		sdf_file = ""
+		sdf_files = []
+		env_list = []
 
 		while True:
 			if Settings.project_folder != "":
-				for file in os.listdir( Settings.project_folder ):
-					if file.endswith(".sdf"):
-						sdf_file = Settings.project_folder + "/" + file
-						break
+				if currentFile.endswith('.sdf'):
+					sdf_file = currentFile
+				else:
+					for file in os.listdir( Settings.project_folder ):
+						if file.endswith(".sdf"):
+							sdf_file = Settings.project_folder + "/" + file
+							break
 
 			if os.path.isfile( sdf_file ):
 				if os.path.isfile( Settings.project_folder + "/manifest.xml" ):
@@ -136,6 +169,7 @@ class Settings:
 					view = sublime.Window.new_file( sublime.active_window() )
 					output = ["Either you are not in a file that exists in an SDF project or you have not created an .sdf file","Make sure you are executing SDF from within a NetSuite project.","The following are the required lines in your .sdf file, this should be saved in the root folder of your SDF project: ","------------------------","account=","email=","role=(ID of an SDF Enabled Role)","url=","------------------------"]
 					view.run_command("insert", {"characters": "\n".join(output)})
+
 				return False
 
 			# Set the project folder to the next level
@@ -144,28 +178,21 @@ class Settings:
 
 			current_depth = current_depth + 1
 
-		if justVerify and executeCallback != False:
+		if justVerify and executeCallback == False:
 			return True
 
-		# We need to see if the user has multiple .sdf files
-		os.chdir( Settings.project_folder )
 
-		sdf_files = []
-		env_list = []
+		# Check SDF Files, if there is only one, then we just move on (unless we are calling from an .sdf file)
+		if currentFile.endswith('.sdf') == False:
+			for file in os.listdir( Settings.project_folder ):
+				if file.endswith(".sdf"):
+					environment = file.replace('.sdf', "").replace('.', '').capitalize()
+					project_start = Settings.project_folder.rfind( Settings.path_var )
+					project = Settings.project_folder[project_start + 1:]
+					project_location = Settings.project_folder.replace(project, "")
 
-		# Check SDF Files, if there is only one, then we just move on
-		for file in os.listdir( Settings.project_folder ):
-			if file == '.sdf':
-				sdf_file = file
-				break
-			if file.endswith(".sdf"):
-				environment = file.replace('.sdf', "").replace('.', '').capitalize()
-				project_start = Settings.project_folder.rfind( Settings.path_var )
-				project = Settings.project_folder[project_start + 1:]
-				project_location = Settings.project_folder.replace(project, "")
-
-				env_list.append( [ environment, "Environment File: " + file, "Project: " + project, "Project Location: " + project_location ] )
-				sdf_files.append( file )
+					env_list.append( [ environment, "Environment File: " + file, "Project: " + project, "Project Location: " + project_location ] )
+					sdf_files.append( file )
 
 		def set_account_info( sdfFile ):
 			temp_account_info = {}
@@ -180,11 +207,11 @@ class Settings:
 
 			Settings.active_account = current_account
 			Settings.account_info[ current_account ] = temp_account_info
+			account_settings = Settings.get_setting('account_data', {})
 
-			if "password" in temp_account_info:
-				Settings.password[ current_account ] = temp_account_info["password"]
-
-			if executeCallback != False:
+			if ( ( current_account in account_settings ) == False ) and ( ( current_account in Settings.password ) == False ):
+				Settings.setpassword( executeCallback )
+			elif executeCallback != False:
 				executeCallback()
 
 		def set_env_info( user_command ):
@@ -192,11 +219,14 @@ class Settings:
 				return False
 			else:
 				sdf_file = Settings.project_folder + "/" + sdf_files[ user_command ]
-
 				set_account_info( sdf_file )
+				return True
 
-		if sdf_file == '.sdf':
-			sdf_file = Settings.project_folder + "/" + sdf_file
+		if ( len( env_list ) == 1 and sdf_file.endswith( '.sdf' ) ) or len( env_list ) == 0:
+			if sdf_file.rfind( Settings.path_var ) < 0:
+				# If we've just found the file name and not the file path
+				sdf_file = Settings.project_folder + Settings.path_var + sdf_file
+
 			set_account_info( sdf_file )
 		else:
 			sublime.active_window().show_quick_panel( env_list, set_env_info )

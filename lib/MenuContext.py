@@ -14,7 +14,7 @@ class MenuContext:
 			return False
 
 	def isSdfProject( path ):
-		return Settings.get_sdf_file( True, path )
+		return Settings.get_sdf_file( False, path )
 
 	def Test( path ):
 		return True
@@ -28,7 +28,7 @@ class MenuContext:
 
 	def sdf_exec_download_file( path ):
 
-		if ( "FileCabinet" in path and (".attributes" in path) == False and os.path.isfile( path ) ) :
+		if ( "FileCabinet/SuiteScripts" in path and (".attributes" in path) == False and os.path.isfile( path ) ) :
 			return True
 
 		return False
@@ -74,38 +74,6 @@ class MenuContext:
 	def sdf_exec_import_object( path ):
 		return True
 
-	def sdf_exec_issue_token( path ):
-		if path.endswith('.sdf'):
-			temp_account_info = {}
-			for line in open( path ):
-				data = line.split("=")
-				temp_account_info[ data[0] ] = data[1].rstrip('\n')
-
-			account_settings = Settings.get_setting('account_data', {})
-
-			if hasattr( account_settings, temp_account_info[ "account" ] ):
-				return False
-			else:
-				return True
-		else:
-			return False
-
-	def sdf_exec_revoke_token( path ):
-		if path.endswith('.sdf'):
-			temp_account_info = {}
-			for line in open( path ):
-				data = line.split("=")
-				temp_account_info[ data[0] ] = data[1].rstrip('\n')
-
-			account_settings = Settings.get_setting('account_data', {})
-
-			if hasattr( account_settings, temp_account_info[ "account" ] ):
-				return True
-			else:
-				return False
-		else:
-			return False
-
 	def sdf_exec_list_bundle( path ):
 		return True
 
@@ -130,8 +98,70 @@ class MenuContext:
 	def sdf_exec_validate_project( path ):
 		return True
 
+	def sdf_exec_issue_token( path ):
+		if path.endswith('.sdf'):
+			temp_account_info = {}
+			for line in open( path ):
+				data = line.split("=")
+				temp_account_info[ data[0] ] = data[1].rstrip('\n')
+
+			account_settings = Settings.get_setting('account_data', {})
+
+			if temp_account_info[ "account" ] in account_settings:
+				return False
+			else:
+				return True
+		else:
+			return False
+
+	def sdf_exec_revoke_token( path ):
+		if path.endswith('.sdf'):
+			temp_account_info = {}
+			for line in open( path ):
+				data = line.split("=")
+				temp_account_info[ data[0] ] = data[1].rstrip('\n')
+
+			account_settings = Settings.get_setting('account_data', {})
+
+			if temp_account_info[ "account" ] in account_settings:
+				return True
+			else:
+				return False
+		else:
+			return False
+
 	def sdf_exec_set_password( path ):
-		return True
+		if path.endswith('.sdf'):
+			temp_account_info = {}
+			for line in open( path ):
+				data = line.split("=")
+				temp_account_info[ data[0] ] = data[1].rstrip('\n')
+
+			account_settings = Settings.get_setting('account_data', {})
+
+			if temp_account_info[ "account" ] in account_settings:
+				return False
+			elif temp_account_info[ "account" ] in Settings.password:
+				return False
+			else:
+				return True
+		else:
+			return False
 
 	def sdf_exec_clear_password( path ):
-		return True
+		if path.endswith('.sdf'):
+			temp_account_info = {}
+			for line in open( path ):
+				data = line.split("=")
+				temp_account_info[ data[0] ] = data[1].rstrip('\n')
+
+			account_settings = Settings.get_setting('account_data', {})
+
+			if temp_account_info[ "account" ] in account_settings:
+				return False
+			elif temp_account_info[ "account" ] in Settings.password:
+				return True
+			else:
+				return False
+		else:
+			return False
