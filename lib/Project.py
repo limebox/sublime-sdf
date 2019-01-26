@@ -7,6 +7,10 @@ class Project:
 
 	def addToDeploy( file ):
 
+		sublime.active_window().run_command('show_panel', {"panel": "console", "toggle": False})
+
+		print("Attempting to add " + file + " to deploy.xml")
+
 		deploy_file_path = Settings.project_folder + Settings.path_var + "deploy.xml"
 
 		deploy_file = open( deploy_file_path , "r")
@@ -47,7 +51,16 @@ class Project:
 			deploy_file.write(contents)
 			deploy_file.close()
 
+			print("Added to Deploy")
+			sublime.active_window().open_file( deploy_file_path )
+		else:
+			print("Object already exists in deploy.xml, ignoring")
+
 	def resetDeploy():
+
+		sublime.active_window().run_command('show_panel', {"panel": "console", "toggle": False})
+
+		print("Resetting deploy.xml on your command")
 
 		are_you_sure = []
 		are_you_sure.append( ["Yes, I really want to reset my deploy.xml", "I understand this will erase deploy.xml back to the Sublime default", "I accept this responsibility"] )
@@ -56,6 +69,9 @@ class Project:
 		def accept_consequence( user_command ):
 
 			if user_command == 0:
+
+				print("")
+				print("Accepting Consequence, resetting deploy.xml")
 
 				account_cconfiguration_temp_file = Settings.project_folder + Settings.path_var + 'AccountConfiguration' + Settings.path_var + "Temp"
 				objects_temp_file = Settings.project_folder + Settings.path_var + 'Objects' + Settings.path_var + "Temp"
@@ -101,5 +117,8 @@ class Project:
 				contents = "What is this file? I'm glad you asked.\n\nNetSuite SDF uses the deploy.xml file to tell your project which files and objects you want to promote.\nWhile SDF does a decent job determining what files changed, you rarely want to use a wildcard ( this -> *) to tell SDF what to check.\nBut if we ommit an object block in the deploy.xml (i.e. <objects>), the deploy validation complains that we are missing something.\nThe solution here is to point each object block to a real empty folder or file that you don't touch, like this one.\nThen, as you update files and objects, only add the those specifically to the deploy.xml file.\nThis can be done manually by adding the files between <path></path> tags and preceded by ~/SuiteScripts, ~/Objects, or ~/AccountConfiguration.\nIf you use the Sublime NetSuite SDF plugin, you can right click on the file or object you want to add to the deploy.xml file and select \"Add To deploy.xml\"\n\nIn any case, we hope this makes your development experience easier!\n\n\n\nHappy coding!\n\nLimebox Team\nhttp://limebox.com"
 				script_ignore_file.write(contents)
 				script_ignore_file.close()
+
+				print("Complete")
+				sublime.active_window().open_file( deploy_file_path )
 
 		sublime.active_window().show_quick_panel(are_you_sure, accept_consequence)
