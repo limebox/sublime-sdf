@@ -1,7 +1,7 @@
 # Sublime SDF
 
 ### Authors Note
-Please forgive how bad the code is. I was focused on getting it out quickly more than making it look pretty. Making it prettier will be a priority after official release.
+Please use the github Issues tab if you are having any issues using this product.
 
 ### Thank you
 Thank you PackageControl.io for listing the NetSuite SDF package:
