@@ -11,7 +11,10 @@ class MenuContext:
 		if MenuContext.isSdfProject( path ):
 			return getattr(MenuContext, action)( path )
 		else:
-			return False
+			if action == "sdf_exec_create_project":
+				return True
+			else:
+				return False
 
 	def isSdfProject( path ):
 		return Settings.get_sdf_file( False, path )
@@ -19,9 +22,17 @@ class MenuContext:
 	def Test( path ):
 		return True
 
+	def sdf_exec_reset_deploy( path ):
+		relative_path = path.replace( Settings.project_folder, "" )
+		if relative_path == '/deploy.xml':
+			return True
+		else:
+			return False
+
 	def sdf_exec_add_to_deploy( path ):
 		# I don't know, let's just OR the heck out of this
-		if ( path.find('Objects') >= 0 or path.find('FileCabinet') >= 0 ) and ( path.endswith('.js') or path.endswith('.xml') or path.endswith('.html') or path.endswith('.jpeg') or path.endswith('.png') or path.endswith('.pdf') or path.endswith('jpg') ):
+		relative_path = path.replace( Settings.project_folder, "" )
+		if ( relative_path.startswith('/Objects/') or relative_path.startswith('/FileCabinet/') or relative_path.startswith('/AccountConfiguration/') ) and ( path.endswith('.js') or path.endswith('.xml') or path.endswith('.html') or path.endswith('.jpeg') or path.endswith('.png') or path.endswith('.pdf') or path.endswith('jpg') ):
 			return True
 
 		return False

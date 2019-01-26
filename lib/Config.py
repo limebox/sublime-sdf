@@ -5,10 +5,11 @@ class Config():
 				"adddependencies": "-p \"[PROJECT_FOLDER]\" -all",
 				"deploy": "-np -p \"[PROJECT_FOLDER]\"",
 				"importbundle": "-p \"[PROJECT_FOLDER]\"",
-				"importconfiguration": "-p \"[PROJECT_FOLDER]\" -configurationid FEATURES:ALL_FEATURES",
+				"importconfiguration": "-p \"[PROJECT_FOLDER]\"", # FEATURES:ALL_FEATURES",
 				"importfiles": "-p \"[PROJECT_FOLDER]\" -excludeproperties",
 				"importobjects": "-p \"[PROJECT_FOLDER]\"",
 				"listbundles": "",
+				"listconfiguration": "",
 				"listfiles": "-folder \"/SuiteScripts\"",
 				"listmissingdependencies": "-p \"[PROJECT_FOLDER]\"",
 				"listobjects": "-p \"[PROJECT_FOLDER]\"",
@@ -248,6 +249,11 @@ class Config():
 				"List Bundles",
 				"Lists the customization bundles that were created in your NetSuite account.",
 				"listbundles"
+			],
+			[
+				"List Configuration",
+				"List available account configuration.",
+				"listconfiguration"
 			],
 			[
 				"List Files",

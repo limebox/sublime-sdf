@@ -50,6 +50,24 @@ class Sdf:
 			command_one = "listobjects"
 			command_two = command
 
+		elif command == "importbundle" and fileOrObject == None:
+
+			# When importing bundles, we need a list of bundles to import
+			command_one_options = cli_arguments[ "listbundles" ]
+			command_two_options = cli_arguments[ command ]
+
+			command_one = "listbundles"
+			command_two = command
+
+		elif command == "importconfiguration" and fileOrObject == None:
+
+			# When importing configuration, we need a list of configuration to import
+			command_one_options = cli_arguments[ "listconfiguration" ]
+			command_two_options = cli_arguments[ command ]
+
+			command_one = "listconfiguration"
+			command_two = command
+
 		else:
 			command_one = command
 			command_one_options = cli_arguments[ command ]
@@ -79,6 +97,8 @@ class Sdf:
 		if second_command_response != "" and second_command_response != None:
 			execute_command_one = execute_command_one.replace("importfiles", 'importfiles -paths ' + second_command_response)
 			execute_command_one = execute_command_one.replace("[SCRIPTID]", '-scriptid ' + second_command_response )
+			execute_command_one = execute_command_one.replace("[BUNDLEID]", '-bundleid ' + second_command_response )
+			execute_command_one = execute_command_one.replace("[CONFIGURATIONID]", '-configurationid ' + second_command_response )
 
 		if command_one == "importobjects":
 			directory = Settings.working_dir + custom_object[2]
@@ -189,10 +209,17 @@ class Sdf:
 				if user_command == -1:
 					return
 
-				print( "Selection Made: " + second_command_data[user_command] )
-
 				data_to_get = second_command_data[user_command].strip()
 				bad_characters = ["?","(",")", " ","&", ".xml"]
+
+				if command_two == "importbundle":
+					data_to_get_list = second_command_data[user_command].split(':')
+					data_to_get = data_to_get_list[ 0 ].strip()
+				elif command_two == "importconfiguration":
+					data_to_get_list = second_command_data[user_command].split(':')
+					data_to_get = data_to_get_list[ 0 ].lower() + ":" + data_to_get_list[ 1 ].lower()
+
+				print( "Selection Made: " + data_to_get )
 
 				if data_to_get == "All":
 					second_command_data.pop(0)
@@ -221,14 +248,14 @@ class Sdf:
 						Sdf.threads.append( Thread(target=Sdf.execute_sdf_command, args=( command_two, execute_command_two, "", "", cli_arguments, custom_object, data_to_get )) )
 
 					if len( failed_files ) > 0:
-						Output.parse_output(args, command_one, "These files:\n" + ",".join(failed_files) + "Have characters not permitted by SDF.\nCharacters cannot be: (" + ",".join( bad_characters ) + ")", custom_object, True)
+						Output.parse_output( command_one, "These files:\n" + ",".join(failed_files) + "Have characters not permitted by SDF.\nCharacters cannot be: (" + ",".join( bad_characters ) + ")", custom_object, True)
 
 					Sdf.current_thread = Sdf.current_thread + 1
 					Sdf.threads[ Sdf.current_thread ].start()
 
 				else:
-					if any(bad_character in data_to_get for bad_character in bad_characters):
-						Output.parse_output(args, command_one, "The requested file: " + data_to_get + "\nHas characters not permitted by SDF. Characters cannot be: (" + ",".join( bad_characters ) + ")", custom_object, True)
+					if command_two != "importconfiguration" and any(bad_character in data_to_get for bad_character in bad_characters):
+						Output.parse_output( command_one, "The requested file: " + data_to_get + "\nHas characters not permitted by SDF. Characters cannot be: (" + ",".join( bad_characters ) + ")", custom_object, True)
 					else:
 						Sdf.threads.append( Thread(target=Sdf.execute_sdf_command, args=( command_two, execute_command_two, "", "", cli_arguments, custom_object, data_to_get )) )
 						Sdf.current_thread = Sdf.current_thread + 1

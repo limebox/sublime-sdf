@@ -31,10 +31,12 @@ class Commands():
 		return True
 
 	def importbundle( sdfCallback ):
+		Commands.reset_cli_arguments["importbundle"] = Commands.reset_cli_arguments["importbundle"] + ' [BUNDLEID]'
 		sdfCallback( 'importbundle', Commands.reset_cli_arguments )
 		return True
 
 	def importconfiguration( sdfCallback ):
+		Commands.reset_cli_arguments["importconfiguration"] = Commands.reset_cli_arguments["importconfiguration"] + ' [CONFIGURATIONID]'
 		sdfCallback( 'importconfiguration', Commands.reset_cli_arguments )
 		return True
 
@@ -57,6 +59,10 @@ class Commands():
 
 	def listbundles( sdfCallback ):
 		sdfCallback( 'listbundles', Commands.reset_cli_arguments )
+		return True
+
+	def listconfiguration( sdfCallback ):
+		sdfCallback( 'listconfiguration', Commands.reset_cli_arguments )
 		return True
 
 	def listfiles( sdfCallback ):

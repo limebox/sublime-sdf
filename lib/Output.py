@@ -11,7 +11,14 @@ class Output:
 		else:
 			output = ""
 
-		if command == "listfiles":
+		if command == "listconfiguration":
+			for line in console_stdout.splitlines():
+				if line.find('FEATURES') >= 0:
+					if return_result == True:
+						output.append( line.replace("Enter password:", "") + "\n" )
+					else:
+						output += line.replace("Enter password:", "") + "\n" # Since "Enter password:" doesn't create a new line, remove it
+		elif command == "listfiles":
 			if return_result == True:
 				output.append( "All" + "\n" )
 
@@ -63,7 +70,7 @@ class Output:
 
 		if return_result == True:
 			return output
-		elif ( debug_output_enabled == False ) or command == "listfiles" or command == "listbundles" or command == "listmissingdependencies" or command == "listobjects" or command == "preview" or command == "validate":
+		elif ( debug_output_enabled == False ) or command == "listfiles" or command == "listbundles" or command == "listmissingdependencies" or command == "listconfiguration" or command == "listobjects" or command == "preview" or command == "validate":
 			# We check to see if debug is turned on, if so, we don't need to output errors (only lists).
 			view = sublime.Window.new_file( sdf_command_do_gui_instance )
 			view.run_command("insert", {"characters": output})

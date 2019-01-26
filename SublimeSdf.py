@@ -8,7 +8,6 @@ for mod in reload_mods:
 
 from .lib.Commands import *
 from .lib.Settings import *
-from .lib.Create import *
 from .lib.MenuContext import *
 from .lib.Actions import *
 
@@ -38,12 +37,15 @@ class SdfExecMenu(sublime_plugin.WindowCommand):
 		return MenuContext.isSdfProject( path )
 
 class SdfExecNotSdfProject(sublime_plugin.WindowCommand):
-	def is_visible( self, paths = [] ):
+	def is_visible( self, paths = [], submenu = "False" ):
 		path = paths[ 0 ]
 		if MenuContext.isVisible( 'Test', path ):
 			return False
 		else:
-			return True
+			if len(os.listdir( path ) ) == 0 and submenu == "False":
+				return False
+			else:
+				return True
 
 	def is_enabled( self, paths = [] ):
 		return False

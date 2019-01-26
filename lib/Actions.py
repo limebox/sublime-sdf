@@ -1,6 +1,8 @@
 from .Commands import *
 from .Config import *
 from .Settings import *
+from .Create import *
+from .Project import *
 
 # Menu Context is used to find out the context of the sidebar and if this menu item should be displayed
 
@@ -10,28 +12,31 @@ class Actions:
 
 	def run( action, path ):
 		Actions.path = path
-		execute_command = getattr(Actions, action)
-		Settings.get_sdf_file( execute_command, path )
+
+		sdf_file_free_actions = ["sdf_exec_create_project", "sdf_exec_reset_deploy", "sdf_exec_add_dependencies_to_manifest", "sdf_exec_add_to_deploy"]
+
+		if ( action in sdf_file_free_actions ) == False:
+			execute_command = getattr(Actions, action)
+			Settings.get_sdf_file( execute_command, path )
+		else:
+			# Commands we can execute without an .sdf file
+			execute_command = getattr(Actions, action)
+			execute_command()
+
+	def sdf_exec_add_to_deploy():
+		Project.addToDeploy( Actions.path )
+
+	def sdf_exec_reset_deploy():
+		Project.resetDeploy()
 
 	def sdf_exec_download_file():
 		Commands.run( 'importfiles', Actions.path.replace( Settings.project_folder + "/FileCabinet", "" ) )
 
 	def sdf_exec_download_object():
-
 		Commands.run( 'update', Actions.path )	
 
 	def sdf_exec_create_project():
-
-		working_dir = path
-
-		sdfFile = Actions.path + "/.sdf"
-		deployFile = Actions.path + "/deploy.xml"
-		manifestFile = Actions.path + "/manifest.xml"
-
-		if ( os.path.isfile( sdfFile ) or os.path.isfile( deployFile ) or os.path.isfile( manifestFile ) ) :
-			return False
-
-		return True
+		Create.project( Actions.path )
 
 	def sdf_exec_add_dependencies_to_manifest():
 		Commands.run( 'adddependencies' )

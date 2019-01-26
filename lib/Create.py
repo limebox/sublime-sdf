@@ -12,6 +12,8 @@ class Create:
 
 	def project( path ):
 
+		sublime.active_window().run_command('show_panel', {"panel": "console", "toggle": False})
+
 		working_dir = path
 
 		if sublime.platform() == 'windows':
@@ -56,3 +58,5 @@ class Create:
 
 		sdf_file.write("account=\nemail=\nrole=\nurl=\n");
 		sdf_file.close()
+
+		sublime.active_window().open_file( working_dir + "/.sdf" )
