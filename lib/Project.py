@@ -88,7 +88,7 @@ class Project:
 				contents.append( "    </configuration>\n" )
 				contents.append( "    <files>\n" )
 				contents.append( "        <!-- This is a dummy script file. Instead of a wildcard, add a new line for each File. A better explanation is in this file -->\n")
-				contents.append( "        <path>~/FileCabinet/sdf_ignore</path>\n" )
+				contents.append( "        <path>~/FileCabinet/SuiteScripts/sdf_ignore</path>\n" )
 				contents.append( "    </files>\n" )
 				contents.append( "    <objects>\n" )
 				contents.append( "        <!-- This is using a Temp folder for the wildcard, Instead of a wildcard, add a new line for each Object outside of the Temp folder. -->\n")
