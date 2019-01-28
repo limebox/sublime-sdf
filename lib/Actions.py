@@ -13,7 +13,7 @@ class Actions:
 	def run( action, path ):
 		Actions.path = path
 
-		sdf_file_free_actions = ["sdf_exec_create_project", "sdf_exec_reset_deploy", "sdf_exec_add_to_deploy"]
+		sdf_file_free_actions = ["sdf_exec_create_project", "sdf_exec_reset_deploy", "sdf_exec_add_to_deploy", "sdf_exec_install_framework"]
 
 		if ( action in sdf_file_free_actions ) == False:
 			execute_command = getattr(Actions, action)
@@ -28,6 +28,9 @@ class Actions:
 
 	def sdf_exec_reset_deploy():
 		Project.resetDeploy()
+
+	def sdf_exec_install_framework():
+		Project.importFramework()
 
 	def sdf_exec_download_file():
 		Commands.run( 'importfiles', Actions.path.replace( Settings.project_folder + "/FileCabinet", "" ) )

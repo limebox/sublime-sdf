@@ -1,5 +1,7 @@
 # The project module handles non-SDF interactions with the project.
 
+import urllib
+import zipfile
 import os
 from .Settings import *
 
@@ -122,3 +124,54 @@ class Project:
 				sublime.active_window().open_file( deploy_file_path )
 
 		sublime.active_window().show_quick_panel(are_you_sure, accept_consequence)
+
+	def importFramework():
+
+		sublime.active_window().run_command('show_panel', {"panel": "console", "toggle": False})
+
+		# Thank you user714415 for an easy start to a Python zip downloader and unzipper: https://stackoverflow.com/q/5710867/4439020
+
+		# Create a temporary download folder
+		download_folder = "TMP_framework_download"
+		extracted_folder = "TMP_framework_exctacted"
+		if not os.path.isdir( Settings.project_folder + Settings.path_var + download_folder ):
+			os.makedirs( Settings.project_folder + Settings.path_var + download_folder )
+		# if not os.path.isdir( Settings.project_folder + Settings.path_var + extracted_folder ):
+		# 	os.makedirs( Settings.project_folder + Settings.path_var + extracted_folder )
+
+		download_url = "https://github.com/limebox/framework/archive/master.zip"
+		output_filename = Settings.project_folder + Settings.path_var + download_folder + Settings.path_var + "framework.zip"
+
+		print("Downloading Limebox Framework from https://github.com/limebox/framework")
+
+		response = urllib.request.urlopen( download_url )
+		#response = urllib.urlopen( download_url )
+		zipped_data = response.read()
+
+		# save data to disk
+		output = open(output_filename,'wb')
+		output.write(zipped_data)
+		output.close()
+
+		# extract the data
+		zfobj = zipfile.ZipFile(output_filename)
+		for name in zfobj.namelist():
+			uncompressed = zfobj.read(name)
+
+			check_name = name.replace('framework-master', '')
+
+			if check_name.startswith( Settings.path_var + 'FileCabinet' + Settings.path_var + 'SuiteScripts' ) and os.path.isfile( Settings.project_folder + check_name ) == False:
+				save_file = Settings.project_folder + check_name
+
+				if check_name.endswith( Settings.path_var ):
+					 if os.path.isdir( save_file ) == False:
+					 	os.makedirs( save_file )
+				else:
+					output = open(save_file,'wb')
+					output.write(uncompressed)
+					output.close()
+
+		os.remove( Settings.project_folder + Settings.path_var + download_folder + Settings.path_var + "framework.zip" )
+		os.rmdir( Settings.project_folder + Settings.path_var + download_folder )
+
+		print( "Successfully installed the Limebox Framework. See the restlet in " + Settings.path_var + "FileCabinet" + Settings.path_var + "SuiteScripts" + Settings.path_var + "Restlet" + Settings.path_var + "GetCustomer.js for a general overview of how the framework works. You can also review at https://limebox.com/developers/framework." )
