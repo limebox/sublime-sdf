@@ -42,7 +42,7 @@ class SdfExecNotSdfProject(sublime_plugin.WindowCommand):
 		if MenuContext.isVisible( 'Test', path ):
 			return False
 		else:
-			if len(os.listdir( path ) ) == 0 and submenu == "False":
+			if os.path.isdir( path ) and len(os.listdir( path ) ) == 0 and submenu == "False":
 				return False
 			else:
 				return True

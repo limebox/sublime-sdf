@@ -164,7 +164,7 @@ class Settings( sublime_plugin.TextCommand ):
 					manifest_file.close()
 					break
 
-			if ( current_depth > depth_allow or Settings.project_folder == ""):
+			if ( current_depth > depth_allow or Settings.project_folder == "" or len(Settings.project_folder) == 2 ):
 				if justVerify == False and executeCallback != False:
 					view = sublime.Window.new_file( sublime.active_window() )
 					output = ["Either you are not in a file that exists in an SDF project or you have not created an .sdf file","Make sure you are executing SDF from within a NetSuite project.","The following are the required lines in your .sdf file, this should be saved in the root folder of your SDF project: ","------------------------","account=","email=","role=(ID of an SDF Enabled Role)","url=","------------------------"]

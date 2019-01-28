@@ -12,7 +12,7 @@ class MenuContext:
 			return getattr(MenuContext, action)( path )
 		else:
 			if action == "sdf_exec_create_project":
-				return True
+				return MenuContext.sdf_exec_create_project( path )
 			else:
 				return False
 
@@ -24,7 +24,7 @@ class MenuContext:
 
 	def sdf_exec_reset_deploy( path ):
 		relative_path = path.replace( Settings.project_folder, "" )
-		if relative_path == '/deploy.xml':
+		if relative_path == Settings.path_var + 'deploy.xml':
 			return True
 		else:
 			return False
