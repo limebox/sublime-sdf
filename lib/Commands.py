@@ -22,25 +22,25 @@ class Commands():
 	files = []
 
 	def adddependencies( sdfCallback ):
-		sdfCallback( 'adddependencies', Commands.reset_cli_arguments )
+		sdfCallback( Settings, 'adddependencies', Commands.reset_cli_arguments )
 		return True
 
 	def deploy( sdfCallback ):
-		sdfCallback( 'deploy', Commands.reset_cli_arguments )
+		sdfCallback( Settings, 'deploy', Commands.reset_cli_arguments )
 		return True
 
 	def importbundle( sdfCallback ):
 		Commands.reset_cli_arguments["importbundle"] = Commands.reset_cli_arguments["importbundle"] + ' [BUNDLEID]'
-		sdfCallback( 'importbundle', Commands.reset_cli_arguments )
+		sdfCallback( Settings, 'importbundle', Commands.reset_cli_arguments )
 		return True
 
 	def importconfiguration( sdfCallback ):
 		Commands.reset_cli_arguments["importconfiguration"] = Commands.reset_cli_arguments["importconfiguration"] + ' [CONFIGURATIONID]'
-		sdfCallback( 'importconfiguration', Commands.reset_cli_arguments )
+		sdfCallback( Settings, 'importconfiguration', Commands.reset_cli_arguments )
 		return True
 
 	def importfiles( sdfCallback ):
-		sdfCallback( 'importfiles', Commands.reset_cli_arguments, None, Commands.actionParameter )
+		sdfCallback( Settings, 'importfiles', Commands.reset_cli_arguments, None, Commands.actionParameter )
 		return True
 
 	def importobjects( sdfCallback ):
@@ -51,25 +51,25 @@ class Commands():
 
 			Commands.reset_cli_arguments["listobjects"] = '-type "' + Commands.custom_objects[ user_command ][1] + '"'
 			Commands.reset_cli_arguments["importobjects"] = Commands.reset_cli_arguments["importobjects"] +  ' -destinationfolder "' + Commands.custom_objects[ user_command ][2] + '" [SCRIPTID] -type "' + Commands.custom_objects[ user_command ][1] + '"'
-			sdfCallback( 'importobjects', Commands.reset_cli_arguments, Commands.custom_objects[ user_command ], Commands.actionParameter)
+			sdfCallback( Settings, 'importobjects', Commands.reset_cli_arguments, Commands.custom_objects[ user_command ], Commands.actionParameter)
 
 		sublime.active_window().show_quick_panel(Commands.custom_objects, selectObjectToImport)
 		return True
 
 	def listbundles( sdfCallback ):
-		sdfCallback( 'listbundles', Commands.reset_cli_arguments )
+		sdfCallback( Settings, 'listbundles', Commands.reset_cli_arguments )
 		return True
 
 	def listconfiguration( sdfCallback ):
-		sdfCallback( 'listconfiguration', Commands.reset_cli_arguments )
+		sdfCallback( Settings, 'listconfiguration', Commands.reset_cli_arguments )
 		return True
 
 	def listfiles( sdfCallback ):
-		sdfCallback( 'listfiles', Commands.reset_cli_arguments )
+		sdfCallback( Settings, 'listfiles', Commands.reset_cli_arguments )
 		return True
 
 	def listmissingdependencies( sdfCallback ):
-		sdfCallback( 'listmissingdependencies', Commands.reset_cli_arguments )
+		sdfCallback( Settings, 'listmissingdependencies', Commands.reset_cli_arguments )
 		return True
 
 	def listobjects( sdfCallback ):
@@ -78,13 +78,13 @@ class Commands():
 				return
 			Commands.reset_cli_arguments["listobjects"] = '-type "' + Commands.custom_objects[userCommand][1] + '"'
 
-			sdfCallback( 'listobjects', Commands.reset_cli_arguments, Commands.custom_objects[user_command])
+			sdfCallback( Settings, 'listobjects', Commands.reset_cli_arguments, Commands.custom_objects[user_command])
 
 		sublime.active_window().show_quick_panel(Commands.custom_objects, selectObject)
 		return True
 
 	def preview( sdfCallback ):
-		sdfCallback( 'preview', Commands.reset_cli_arguments )
+		sdfCallback( Settings, 'preview', Commands.reset_cli_arguments )
 		return True
 	def update( sdfCallback, action = 'update' ):
 
@@ -103,7 +103,7 @@ class Commands():
 			else:
 				Commands.reset_cli_arguments["update"] += ' -scriptid "' + update_object + '"'
 
-			sdfCallback( action, Commands.reset_cli_arguments )
+			sdfCallback( Settings, action, Commands.reset_cli_arguments )
 
 		if Settings.selected_file != '' and Settings.context == 'menu':
 			file_to_update = Settings.selected_file.replace('.xml', '')
@@ -124,15 +124,30 @@ class Commands():
 		return True
 
 	def validate( sdfCallback ):
-		sdfCallback( 'validate', Commands.reset_cli_arguments )
+		sdfCallback( Settings, 'validate', Commands.reset_cli_arguments )
 		return True
 
 	def revoketoken( sdfCallback ):
-		sdfCallback( 'revoketoken', Commands.reset_cli_arguments )
+		sdfCallback( Settings, 'revoketoken', Commands.reset_cli_arguments )
 		return True
 
 	def issuetoken( sdfCallback ):
-		sdfCallback( 'issuetoken', Commands.reset_cli_arguments )
+		sdfCallback( Settings, 'issuetoken', Commands.reset_cli_arguments )
+		return True
+
+	def savetoken( sdfCallback ):
+
+		def setTokenSecret( tokenSecret ):
+			Commands.reset_cli_arguments['savetoken'] = Commands.reset_cli_arguments['savetoken'] + " -tokensecret " + tokenSecret
+			sdfCallback( Settings, 'savetoken', Commands.reset_cli_arguments )
+
+		def setTokenId( tokenId ):
+
+			Commands.reset_cli_arguments['savetoken'] = Commands.reset_cli_arguments['savetoken'] + " -tokenkey " + tokenId
+			sublime.active_window().show_input_panel("NetSuite Token Secret", "", setTokenSecret, None, None )
+
+
+		sublime.active_window().show_input_panel("NetSuite Token ID", "", setTokenId, None, None )
 		return True
 
 	def setpassword( sdfCallback ):

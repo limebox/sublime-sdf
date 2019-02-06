@@ -38,6 +38,7 @@
 			{"command": "sdf_exec_actions", "caption": "Set Password", "id": "sdf_exec_set_password", "args": {"paths": [], "action":"sdf_exec_set_password"} },
 			{"command": "sdf_exec_actions", "caption": "Clear Password", "id": "sdf_exec_clear_password", "args": {"paths": [], "action":"sdf_exec_clear_password"} },
 			{"command": "sdf_exec_actions", "caption": "Issue Token", "id": "sdf_exec_issue_token", "args": {"paths": [], "action":"sdf_exec_issue_token"} },
+			{"command": "sdf_exec_actions", "caption": "Save Token", "id": "sdf_exec_save_token", "args": {"paths": [], "action":"sdf_exec_save_token"} },
 			{"command": "sdf_exec_actions", "caption": "Revoke Token", "id": "sdf_exec_revoke_token", "args": {"paths": [], "action":"sdf_exec_revoke_token"} },
 			{"command": "sdf_exec_actions", "caption": "Install Limebox Framework", "id": "sdf_exec_install_framework", "args": {"paths": [], "action":"sdf_exec_install_framework"} },
 			{"command": "sdf_exec_not_sdf_project", "caption": "Not An SDF Project", "id": "sdf_exec_not_sdf_project", "args": {"paths": []}}

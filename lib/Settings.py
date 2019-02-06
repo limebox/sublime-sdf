@@ -1,5 +1,7 @@
 import sublime, sublime_plugin, os
 
+from .Sdf import *
+
 class Settings( sublime_plugin.TextCommand ):
 
 	context = "tab"
@@ -13,6 +15,7 @@ class Settings( sublime_plugin.TextCommand ):
 	path_var = "/"
 	sdfcli_ext = ""
 	temp_password = ""
+	active_cli_version = ""
 
 	if os.name == 'nt':
 		path_var = "\\"
@@ -237,3 +240,19 @@ class Settings( sublime_plugin.TextCommand ):
 			set_account_info( sdf_file )
 		else:
 			sublime.active_window().show_quick_panel( env_list, set_env_info )
+
+	def reset_environments( new_version ):
+		Settings.set_setting("cli_version", new_version)
+		# Settings.set_setting("account_data", {})
+
+	def check_version():
+
+		Settings.project_folder = sublime.cache_path()
+
+		def set_version( active_version ):
+			known_version = Settings.get_setting("cli_version", {})
+
+			if active_version != known_version:
+				Settings.reset_environments( active_version )
+
+		Sdf.prepare_command( Settings, 'version', "", None, None, set_version )

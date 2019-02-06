@@ -11,6 +11,9 @@ from .lib.Settings import *
 from .lib.MenuContext import *
 from .lib.Actions import *
 
+def plugin_loaded():
+	Settings.check_version()
+
 class SdfExecOpen(sublime_plugin.TextCommand):
 
 	temp_password = ""

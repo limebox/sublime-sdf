@@ -65,6 +65,9 @@ class Actions:
 	def sdf_exec_issue_token():
 		Commands.run( 'issuetoken' )
 
+	def sdf_exec_save_token():
+		Commands.run( 'savetoken' )
+
 	def sdf_exec_list_bundle():
 		Commands.run( 'listbundles' )
 

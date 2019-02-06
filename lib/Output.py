@@ -47,6 +47,10 @@ class Output:
 
 			if output.replace("\n", "") == "":
 				output = "No unresolved dependencies"
+		elif command == "version_mismatch":
+			output += "You upgraded the sdfcli without restarting Sublime Text.\n"
+			output += "That's not a big deal, but the the tokens get reset after an upgrade.\n"
+			output += "Cleanup complete. Please re-issue your token."
 		elif command == "listobjects":
 			if return_result == True:
 				output.append( "All" + "\n" )
@@ -70,7 +74,7 @@ class Output:
 
 		if return_result == True:
 			return output
-		elif ( debug_output_enabled == False ) or command == "listfiles" or command == "listbundles" or command == "listmissingdependencies" or command == "listconfiguration" or command == "listobjects" or command == "preview" or command == "validate":
+		elif ( debug_output_enabled == False ) or command == "version_mismatch" or command == "listfiles" or command == "listbundles" or command == "listmissingdependencies" or command == "listconfiguration" or command == "listobjects" or command == "preview" or command == "validate":
 			# We check to see if debug is turned on, if so, we don't need to output errors (only lists).
 			view = sublime.Window.new_file( sdf_command_do_gui_instance )
 			view.run_command("insert", {"characters": output})

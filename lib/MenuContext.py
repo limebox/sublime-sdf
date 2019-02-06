@@ -132,6 +132,22 @@ class MenuContext:
 		else:
 			return False
 
+	def sdf_exec_save_token( path ):
+		if path.endswith('.sdf'):
+			temp_account_info = {}
+			for line in open( path ):
+				data = line.split("=")
+				temp_account_info[ data[0] ] = data[1].rstrip('\n')
+
+			account_settings = Settings.get_setting('account_data', {})
+
+			if temp_account_info[ "account" ] in account_settings:
+				return False
+			else:
+				return True
+		else:
+			return False
+
 	def sdf_exec_revoke_token( path ):
 		if path.endswith('.sdf'):
 			temp_account_info = {}

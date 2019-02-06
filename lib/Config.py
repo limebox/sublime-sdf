@@ -18,6 +18,7 @@ class Config():
 				"updatecustomrecordwithinstances": "-p \"[PROJECT_FOLDER]\"",
 				"validate": "-p \"[PROJECT_FOLDER]\" -server",
 				"issuetoken": "",
+				"savetoken": "",
 				"revoketoken": ""
 		},
 		"custom_objects": [
@@ -294,6 +295,11 @@ class Config():
 				"Issue Token",
 				"Issues a TBA token to authenticate against your NetSuite Production account.",
 				"issuetoken"
+			],
+			[
+				"Save Token",
+				"Saves the latest TBA token created from your NetSuite account to use with SDF CLI.",
+				"savetoken"
 			],
 			[
 				"Revoke Token",

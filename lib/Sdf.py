@@ -1,6 +1,5 @@
 import subprocess, math, time
 
-from .Settings import *
 from .Loader import *
 from .Debug import *
 from .Output import *
@@ -12,14 +11,17 @@ class Sdf:
 
 	threads = []
 	current_thread = -1
+	Settings = None
 
 	def __init__(self):
 		self.output_file = None
 		self.panel_output = None
 
-	def prepare_command( command, cli_arguments, custom_object = None, fileOrObject = None ):
+	def prepare_command( Settings, command, cli_arguments, custom_object = None, fileOrObject = None, callback = None ):
 
-		command_prefix = Settings.get_setting('cli_executable', {}) + Settings.sdfcli_ext
+		Sdf.Settings = Settings
+
+		command_prefix = Sdf.Settings.get_setting('cli_executable', {}) + Sdf.Settings.sdfcli_ext
 
 		command_one = ''
 		command_two = ''
@@ -68,28 +70,35 @@ class Sdf:
 			command_one = "listconfiguration"
 			command_two = command
 
+		elif command == "version":
+
+			# We are just running the cli tool to get the current version
+			command_one = ""
+			command_one_options = ""
+
 		else:
 			command_one = command
 			command_one_options = cli_arguments[ command ]
 
+		if command != "version":
+			# Ignore these section if we just want the version of the cli
+			for item in Sdf.Settings.account_info[ Sdf.Settings.active_account ]:
+				command_one_options = command_one_options + " -" + item + ' "' + Sdf.Settings.account_info[ Sdf.Settings.active_account ][ item ] + '"'
+				command_two_options = command_two_options + " -" + item + ' "' + Sdf.Settings.account_info[ Sdf.Settings.active_account ][ item ] + '"'
 
-		for item in Settings.account_info[ Settings.active_account ]:
-			command_one_options = command_one_options + " -" + item + ' "' + Settings.account_info[ Settings.active_account ][ item ] + '"'
-			command_two_options = command_two_options + " -" + item + ' "' + Settings.account_info[ Settings.active_account ][ item ] + '"'
-
-		execute_command_one = command_prefix + " " + command_one + " " + command_one_options.replace('[PROJECT_FOLDER]', Settings.project_folder)
+		execute_command_one = command_prefix + " " + command_one + " " + command_one_options.replace('[PROJECT_FOLDER]', Sdf.Settings.project_folder)
 		if command_two != '':
-			execute_command_two = command_prefix + " " + command_two + " " + command_two_options.replace('[PROJECT_FOLDER]', Settings.project_folder)
+			execute_command_two = command_prefix + " " + command_two + " " + command_two_options.replace('[PROJECT_FOLDER]', Sdf.Settings.project_folder)
 		
 		if Loader.loader_thread.ident == None:
 			Loader.loader_thread.start()
 
-		t = Thread(target=Sdf.execute_sdf_command, args=( command_one, execute_command_one, command_two, execute_command_two, cli_arguments, custom_object, fileOrObject ))
+		t = Thread(target=Sdf.execute_sdf_command, args=( command_one, execute_command_one, command_two, execute_command_two, cli_arguments, custom_object, fileOrObject, callback ))
 		t.start()
 
 		return True
 
-	def execute_sdf_command( command_one, execute_command_one, command_two, execute_command_two, cli_arguments, custom_object, second_command_response = "", return_error=True, stdin=None):
+	def execute_sdf_command( command_one, execute_command_one, command_two, execute_command_two, cli_arguments, custom_object, second_command_response = "", callback=None, return_error=True, stdin=None):
 
 		has_error = False
 
@@ -101,18 +110,18 @@ class Sdf:
 			execute_command_one = execute_command_one.replace("[CONFIGURATIONID]", '-configurationid ' + second_command_response )
 
 		if command_one == "importobjects":
-			directory = Settings.working_dir + custom_object[2]
+			directory = Sdf.Settings.working_dir + custom_object[2]
 			if not os.path.exists(directory):
 				os.makedirs(directory)
 		elif command_one == "adddependencies":
 			# Since the manifest might have old information, let's reset it
 
-			manifest_file = open( Settings.project_folder + "/manifest.xml","w+" )
-			project_name = Settings.project_folder[ Settings.project_folder.rfind( Settings.path_var ) + 1 : ]
+			manifest_file = open( Sdf.Settings.project_folder + "/manifest.xml","w+" )
+			project_name = Sdf.Settings.project_folder[ Sdf.Settings.project_folder.rfind( Sdf.Settings.path_var ) + 1 : ]
 			manifest_file.write("<manifest projecttype=\"ACCOUNTCUSTOMIZATION\">\n  <projectname>" + project_name + "</projectname>\n  <frameworkversion>1.0</frameworkversion>\n</manifest>")
 			manifest_file.close()
 
-		print("Execute sdfcli Command: " + execute_command_one)
+		print("Execute sdfcli Command: " + execute_command_one + " in project " + Sdf.Settings.project_folder)
 
 		if return_error:
 			stderr = STDOUT
@@ -131,7 +140,7 @@ class Sdf:
 											stdout=subprocess.PIPE,
 											stderr=subprocess.STDOUT,
 											shell=True,
-											cwd=Settings.project_folder,
+											cwd=Sdf.Settings.project_folder,
 											startupinfo=startupinfo)
 
 		Loader.loading_message = "Connecting to NetSuite"
@@ -144,9 +153,27 @@ class Sdf:
 		while True:
 			console_command.stdin.flush()
 			proc_read = console_command.stdout.readline()
+
+			if ( proc_read.find(b"[INFO] Building SDF CLI") >= 0 ):
+				cli_version_line = proc_read.decode("utf-8").strip()
+				cli_version = cli_version_line.replace("[INFO] Building SDF CLI", "").strip()
+				if callback != None:
+					callback( cli_version )
+					console_command.kill()
+					break
+				elif cli_version != Sdf.Settings.get_setting("cli_version", {}):
+					print(">>>>>>>>>>>>>>>>>> NetSuite SDF Failed.")
+					sublime.status_message( "sdfcli version mismatch" )
+					Sdf.Settings.reset_environments( cli_version )
+					console_command.kill()
+					command_one = "version_mismatch"
+					execute_command_two = ""
+					break
+
+
 			if ( proc_read.find(b"Using user credentials.") >= 0 ):
 				# If a token has not been set, we will see this message
-				password_line = Settings.password[ Settings.active_account ] + '\n'
+				password_line = Sdf.Settings.password[ Sdf.Settings.active_account ] + '\n'
 				console_command.stdin.write( str.encode( password_line ) )
 
 			if (
@@ -158,14 +185,14 @@ class Sdf:
 				console_command.stdin.write(b'YES\n')
 
 			if (proc_read.find(b"Token has been issued.") >= 0):
-				account_settings = Settings.get_setting('account_data', {})
-				account_settings[ Settings.active_account ] = {'token': True}
-				Settings.set_setting( 'account_data', account_settings )
+				account_settings = Sdf.Settings.get_setting('account_data', {})
+				account_settings[ Sdf.Settings.active_account ] = {'token': True}
+				Sdf.Settings.set_setting( 'account_data', account_settings )
 
 			if (proc_read.find(b"Token has been revoked.") >= 0):
-				account_settings = Settings.get_setting('account_data', {})
-				del account_settings[ Settings.active_account ]
-				Settings.set_setting( 'account_data', account_settings )
+				account_settings = Sdf.Settings.get_setting('account_data', {})
+				del account_settings[ Sdf.Settings.active_account ]
+				Sdf.Settings.set_setting( 'account_data', account_settings )
 
 			if (proc_read.find(b"BUILD SUCCESS") >= 0):
 				console_command.kill()
