@@ -56,7 +56,13 @@ class Settings( sublime_plugin.TextCommand ):
 		sublime.active_window().show_input_panel("NetSuite Password", "", None, get_password, None)
 
 	def get_sdf_file( executeCallback, path = "" ):
-		root_folder = sublime.active_window().extract_variables()[ 'project_path' ] + Settings.path_var
+		active_vars = sublime.active_window().extract_variables()
+		if 'project_path' in active_vars:
+			root_folder = active_vars[ 'project_path' ] + Settings.path_var
+		elif 'file_path' in active_vars:
+			root_folder = active_vars[ 'file_path' ] + Settings.path_var
+		else:
+			root_folder = ""
 
 		if path != "":
 			# This is a request from the context menu and we want to see if an SDF file even exists
@@ -100,7 +106,7 @@ class Settings( sublime_plugin.TextCommand ):
 				if user_command == -1:
 					return False
 				else:
-					current_file = sdf_projects[ user_command ][1] + Settings.path_var + '.sdf' # This may or may not be a file, but that's ok, next step is to look for the sdf file
+					current_file = sdf_projects[ user_command ][1] + Settings.path_var + 'not_a_file.not_a_file' # This may or may not be a file, but that's ok, next step is to look for the sdf file
 					if current_file.find( Settings.path_var ) != 0:
 						current_file = root_folder + current_file
 
@@ -143,7 +149,6 @@ class Settings( sublime_plugin.TextCommand ):
 		sdf_file = ""
 		sdf_files = []
 		env_list = []
-
 		while True:
 			if Settings.project_folder != "":
 				if currentFile.endswith('.sdf'):
@@ -187,6 +192,8 @@ class Settings( sublime_plugin.TextCommand ):
 			for file in os.listdir( Settings.project_folder ):
 				if file.endswith(".sdf"):
 					environment = file.replace('.sdf', "").replace('.', '').capitalize()
+					if environment == "":
+						environment = "Default"
 					project_start = Settings.project_folder.rfind( Settings.path_var )
 					project = Settings.project_folder[project_start + 1:]
 					project_location = Settings.project_folder.replace(project, "")
