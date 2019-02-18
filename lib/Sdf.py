@@ -184,7 +184,10 @@ class Sdf:
 				):
 				console_command.stdin.write(b'YES\n')
 
-			if (proc_read.find(b"Token has been issued.") >= 0):
+			if (
+				(proc_read.find(b"Token has been issued.") >= 0)
+				or (proc_read.find(b"Token has been saved.") >= 0)
+				):
 				account_settings = Sdf.Settings.get_setting('account_data', {})
 				account_settings[ Sdf.Settings.active_account ] = {'token': True}
 				Sdf.Settings.set_setting( 'account_data', account_settings )

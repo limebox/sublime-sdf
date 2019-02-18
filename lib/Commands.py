@@ -138,6 +138,7 @@ class Commands():
 	def savetoken( sdfCallback ):
 
 		def setTokenSecret( tokenSecret ):
+			sublime.active_window().run_command('show_panel', {"panel": "console", "toggle": False})
 			Commands.reset_cli_arguments['savetoken'] = Commands.reset_cli_arguments['savetoken'] + " -tokensecret " + tokenSecret
 			sdfCallback( Settings, 'savetoken', Commands.reset_cli_arguments )
 
