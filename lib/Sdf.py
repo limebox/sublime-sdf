@@ -173,8 +173,18 @@ class Sdf:
 
 			if ( proc_read.find(b"Using user credentials.") >= 0 ):
 				# If a token has not been set, we will see this message
-				password_line = Sdf.Settings.password[ Sdf.Settings.active_account ] + '\n'
-				console_command.stdin.write( str.encode( password_line ) )
+				try:
+					password_line = Sdf.Settings.password[ Sdf.Settings.active_account ] + '\n'
+					console_command.stdin.write( str.encode( password_line ) )
+				except:
+					print(">>>>>>>>>>>>>>>>>> NetSuite SDF Failed.")
+					print("Token is invalid and has been reset. Please try again.")
+					account_settings = Sdf.Settings.get_setting('account_data', {})
+					del account_settings[ Sdf.Settings.active_account ]
+					Sdf.Settings.set_setting( 'account_data', account_settings )
+					console_command.kill()
+					break
+
 
 			if (
 				(proc_read.find(b"Type YES to continue") >= 0)
