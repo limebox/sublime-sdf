@@ -33,6 +33,7 @@
 			{"command": "sdf_exec_actions", "caption": "Update File From Account", "id": "sdf_exec_download_file", "args": {"paths": [], "action":"sdf_exec_download_file"} },
 			{"command": "sdf_exec_actions", "caption": "Update Object From Account", "id": "sdf_exec_download_object", "args": {"paths": [], "action":"sdf_exec_download_object"} },
 			{"command": "sdf_exec_actions", "caption": "Add To deploy.xml", "id": "sdf_exec_add_to_deploy", "args": {"paths": [], "action":"sdf_exec_add_to_deploy"} },
+			{"command": "sdf_exec_actions", "caption": "Remove From deploy.xml", "id": "sdf_exec_remove_from_deploy", "args": {"paths": [], "action":"sdf_exec_remove_from_deploy"} },
 			{"command": "sdf_exec_actions", "caption": "Reset deploy.xml", "id": "sdf_exec_reset_deploy", "args": {"paths": [], "action":"sdf_exec_reset_deploy"} },
 			{"command": "sdf_exec_actions", "caption": "Update manifest.xml", "id": "sdf_exec_add_dependencies_to_manifest", "args": {"paths": [], "action":"sdf_exec_add_dependencies_to_manifest"} },
 			{"command": "sdf_exec_actions", "caption": "Set Password", "id": "sdf_exec_set_password", "args": {"paths": [], "action":"sdf_exec_set_password"} },

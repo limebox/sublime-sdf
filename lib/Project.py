@@ -7,6 +7,72 @@ from .Settings import *
 
 class Project:
 
+	def inDeployFile( file ):
+
+		deploy_file_path = Settings.project_folder + Settings.path_var + "deploy.xml"
+
+		deploy_file = open( deploy_file_path , "r")
+		contents = deploy_file.readlines()
+		deploy_file.close()
+
+		relative_path = file.replace( Settings.project_folder, "" )
+
+		already_exists = False
+		for line in contents:
+			if relative_path in line:
+				already_exists = True
+
+		return already_exists
+		
+
+	# Check if the requested file meets the standards for being deployable
+	def isDeployable( file ):
+
+		is_deployable_folder = False
+		is_deployable_file = False
+		deployable_folders = [ 'Objects', 'FileCabinet', 'AccountConfiguration']
+		deployable_files = ['js','xml','html','jpeg','png','pdf','jpg','css']
+
+		for folder in deployable_folders:
+			if file.startswith( Settings.path_var + folder + Settings.path_var ):
+				is_deployable_folder = True
+				break
+
+		if is_deployable_folder:
+			for filetype in deployable_files:
+				if file.endswith('.' + filetype):
+					is_deployable_file = True
+
+		return is_deployable_file
+
+	def removeFromDeploy( file ):
+
+		sublime.active_window().run_command('show_panel', {"panel": "console", "toggle": False})
+
+		print("Attempting to remove " + file + " from deploy.xml")
+
+		deploy_file_path = Settings.project_folder + Settings.path_var + "deploy.xml"
+
+		deploy_file = open( deploy_file_path , "r")
+		contents = deploy_file.readlines()
+		deploy_file.close()
+
+		relative_path = file.replace( Settings.project_folder, "" )
+
+		new_contents = []
+		for line in contents:
+			if ( relative_path in line ) == False:
+				new_contents.append( line )
+
+		deploy_file = open( deploy_file_path, "w")
+		new_contents = "".join(new_contents)
+		deploy_file.write(new_contents)
+		deploy_file.close()
+
+		print("Removed from deploy.xml")
+		sublime.active_window().open_file( deploy_file_path )
+
+
 	def addToDeploy( file ):
 
 		sublime.active_window().run_command('show_panel', {"panel": "console", "toggle": False})
@@ -22,11 +88,12 @@ class Project:
 		relative_path = file.replace( Settings.project_folder, "" )
 		file_line = "        <path>~" + relative_path + "</path>\n"
 
-		tofind = [ "<files>", "</files>" ]
-		if relative_path.startswith('/Objects/'):
+		if relative_path.startswith( Settings.path_var + 'Objects' + Settings.path_var ):
 			tofind = [ "<objects>", "</objects>" ]
-		elif relative_path.startswith('/AccountConfiguration/'):
+		elif relative_path.startswith( Settings.path_var + 'AccountConfiguration' + Settings.path_var ):
 			tofind = [ "<configuration>", "</configuration>" ]
+		else:
+			tofind = [ "<files>", "</files>" ]
 
 		insert_line = 0
 		line_number = 0
@@ -53,7 +120,7 @@ class Project:
 			deploy_file.write(contents)
 			deploy_file.close()
 
-			print("Added to Deploy")
+			print("Added to deploy.xml")
 			sublime.active_window().open_file( deploy_file_path )
 		else:
 			print("Object already exists in deploy.xml, ignoring")

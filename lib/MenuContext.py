@@ -1,6 +1,7 @@
 import sublime, os
 
 from .Settings import *
+from .Project import *
 
 # Menu Context is used to find out the context of the sidebar and if this menu item should be displayed
 
@@ -36,10 +37,18 @@ class MenuContext:
 
 		return False
 
+	def sdf_exec_remove_from_deploy( path ):
+		# I don't know, let's just OR the heck out of this
+		relative_path = path.replace( Settings.project_folder, "" )
+		if ( Project.inDeployFile( relative_path ) ):
+			return True
+
+		return False
+
 	def sdf_exec_add_to_deploy( path ):
 		# I don't know, let's just OR the heck out of this
 		relative_path = path.replace( Settings.project_folder, "" )
-		if ( relative_path.startswith( Settings.path_var + 'Objects' + Settings.path_var ) or relative_path.startswith( Settings.path_var + 'FileCabinet' + Settings.path_var ) or relative_path.startswith( Settings.path_var + 'AccountConfiguration' + Settings.path_var ) ) and ( path.endswith('.js') or path.endswith('.xml') or path.endswith('.html') or path.endswith('.jpeg') or path.endswith('.png') or path.endswith('.pdf') or path.endswith('jpg') or path.endswith('css') ):
+		if ( Project.inDeployFile( relative_path ) == False and Project.isDeployable( relative_path ) ):
 			return True
 
 		return False
