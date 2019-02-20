@@ -2,25 +2,25 @@
 	<content><![CDATA[
 /**
  * @NApiVersion 2.x
- * @NScriptType Suitelet
+ * @NScriptType WorkflowActionScript
  */
 
 define([ ${1:Libraries} ],
 
 function( ${2:Library Variables} ) {
 
-	function onRequest( context ) {
+	function onAction( context ) {
 
 		$3
 
 	};
 
 	return {
-		onRequest : onRequest
+		onAction : onAction
 	};
 
 });
 ]]></content>
-	<tabTrigger>suitelet</tabTrigger>
+	<tabTrigger>workflow</tabTrigger>
 	<scope>source.js</scope>
 </snippet>

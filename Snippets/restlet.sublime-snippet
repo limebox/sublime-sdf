@@ -9,19 +9,19 @@ define([ ${1:Libraries} ],
 
 function( ${2:Library Variables} ) {
 
-	function create(context) {
+	function create( context ) {
 
 		$3
 
 	};
 
-	function read(context) {
+	function read( context ) {
 
 
 
 	};
 
-	function update(context) {
+	function update( context ) {
 
 
 

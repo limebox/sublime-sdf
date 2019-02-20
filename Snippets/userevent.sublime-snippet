@@ -9,19 +9,19 @@ define([ ${1:Libraries} ],
 
 function( ${2:Library Variables} ) {
 
-	function beforeLoad(context) {
+	function beforeLoad( context ) {
 
 		$3
 
 	};
 
-	function beforeSubmit(context) {
+	function beforeSubmit( context ) {
 
 
 
 	};
 
-	function afterSubmit(context) {
+	function afterSubmit( context ) {
 
 
 

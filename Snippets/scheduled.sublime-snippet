@@ -2,25 +2,25 @@
 	<content><![CDATA[
 /**
  * @NApiVersion 2.x
- * @NScriptType Suitelet
+ * @NScriptType ScheduledScript
  */
 
 define([ ${1:Libraries} ],
 
 function( ${2:Library Variables} ) {
 
-	function onRequest( context ) {
+	function execute( context ) {
 
 		$3
 
 	};
 
 	return {
-		onRequest : onRequest
+		execute : execute
 	};
 
 });
 ]]></content>
-	<tabTrigger>suitelet</tabTrigger>
+	<tabTrigger>scheduled</tabTrigger>
 	<scope>source.js</scope>
 </snippet>
