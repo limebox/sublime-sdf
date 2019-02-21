@@ -23,3 +23,4 @@ Versioning is as such:
 - General Quality of Life improvements
 - Multi-environment support
 - Multi-client support
+- Initial support for SDF SDFK version awareness to disable memu items if not supported by the current version of the SDK
