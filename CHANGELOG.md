@@ -1,13 +1,25 @@
-# Changelog
+# Sublime Text 3 - Limebox NetSuite SDF Plugin
+
+## Changelog
 All notable changes to this project will be documented in this file.
 
-# 19.1.0 Release Info
+## 1.1901.1 Release Info
 For SDF projects, a new right click menu has been added to give you more control over your project
+Versioning is as such:
+[plugin major release].[NetSuite Release].[plugin patch release]
 
-## [19.1.0] - 2019-02-20
-### Added
+### [1.1901.1] - 2019-02-20
+#### Added
 - Updated for 19.1 support
 - Support for "Save Token" function from 18.2.1
 - New file context menu
 - "Add to Deploy" and "Remove From Deploy" context menus will modify your deploy.xml file
 - "Reset Deploy.xml" to set to default minimum and add default files / folders
+- Ignore password input when token is used
+- More suitescript snippets
+- Support to install the Limebox Framework directly from context menu
+- Plugin specific settings
+- Invalid token handling
+- General Quality of Life improvements
+- Multi-environment support
+- Multi-client support
