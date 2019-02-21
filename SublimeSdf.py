@@ -10,8 +10,10 @@ from .lib.Commands import *
 from .lib.Settings import *
 from .lib.MenuContext import *
 from .lib.Actions import *
+from .lib.Greet import *
 
 def plugin_loaded():
+	Greet.display_changelog()
 	Settings.check_version()
 
 class SdfExecOpen(sublime_plugin.TextCommand):

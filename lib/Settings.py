@@ -16,6 +16,7 @@ class Settings( sublime_plugin.TextCommand ):
 	sdfcli_ext = ""
 	temp_password = ""
 	active_cli_version = ""
+	plugin_version = "19.1.0"
 
 	if os.name == 'nt':
 		path_var = "\\"
@@ -243,7 +244,6 @@ class Settings( sublime_plugin.TextCommand ):
 
 	def reset_environments( new_version ):
 		Settings.set_setting("cli_version", new_version)
-		# Settings.set_setting("account_data", {})
 
 	def check_version():
 
