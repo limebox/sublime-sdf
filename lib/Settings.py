@@ -16,7 +16,7 @@ class Settings( sublime_plugin.TextCommand ):
 	sdfcli_ext = ""
 	temp_password = ""
 	active_cli_version = ""
-	plugin_version = "19.1.0"
+	plugin_version = "1.1910.1"
 
 	if os.name == 'nt':
 		path_var = "\\"
