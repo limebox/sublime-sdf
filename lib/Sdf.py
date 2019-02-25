@@ -110,7 +110,7 @@ class Sdf:
 			execute_command_one = execute_command_one.replace("[CONFIGURATIONID]", '-configurationid ' + second_command_response )
 
 		if command_one == "importobjects":
-			directory = Sdf.Settings.working_dir + custom_object[2]
+			directory = Sdf.Settings.project_folder + custom_object[2]
 			if not os.path.exists(directory):
 				os.makedirs(directory)
 		elif command_one == "adddependencies":
