@@ -28,6 +28,11 @@
 				{"command": "sdf_exec_actions", "caption": "Clear Password", "id": "sdf_exec_clear_password", "args": {"paths": [], "action": "sdf_exec_clear_password"} },
 				{"command": "sdf_exec_not_sdf_project", "caption": "Not An SDF Project", "id": "sdf_exec_not_sdf_project", "args": {"paths": [], "submenu": "True"}}
 			]},
+			{"caption": "Manage SDF SDK", "children":[
+				{"command": "sdf_exec_manage_sdf", "caption": "Set SDF Version", "id": "sdf_exec_set_version", "args": { "action": "sdf_exec_set_version" } },
+				{"command": "sdf_exec_manage_sdf", "caption": "Update SDF SDK", "id": "sdf_exec_set_version", "args": { "action": "sdf_exec_update" } },
+				{"command": "sdf_exec_manage_sdf", "caption": "Install SDF SDK", "id": "sdf_exec_set_version", "args": { "action": "sdf_exec_set_version" } },
+			]},
 			{"caption": "-"},
 			{"command": "sdf_exec_actions", "caption": "Create SDF Project", "id": "sdf_exec_create_project", "args": {"paths": [], "action": "sdf_exec_create_project"} },
 			{"command": "sdf_exec_actions", "caption": "Update File From Account", "id": "sdf_exec_download_file", "args": {"paths": [], "action":"sdf_exec_download_file"} },

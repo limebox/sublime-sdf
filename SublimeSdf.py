@@ -11,10 +11,12 @@ from .lib.Settings import *
 from .lib.MenuContext import *
 from .lib.Actions import *
 from .lib.Greet import *
+from .lib.PackageManager import *
 
 def plugin_loaded():
 	Greet.display_changelog()
 	Settings.check_version()
+	PackageManager.setOptions()
 
 class SdfExecOpen(sublime_plugin.TextCommand):
 
@@ -70,4 +72,12 @@ class SdfExecActions(sublime_plugin.WindowCommand):
 	def run( self, action, paths = [], **args ):
 		path = paths[ 0 ]
 		Actions.run( action, path )
+		return True
+
+class SdfExecManageSdf(sublime_plugin.WindowCommand):
+
+	def is_visible( self, action, paths = [] ):
+		return PackageManager.isVisible( action );
+
+	def run( self, action, paths = [], **args ):
 		return True
