@@ -13,14 +13,12 @@ class Settings( sublime_plugin.TextCommand ):
 	selected_file_path = ""
 	active_account = ""
 	path_var = "/"
-	sdfcli_ext = ""
 	temp_password = ""
 	active_cli_version = ""
 	plugin_version = "1.1910.1"
 
 	if os.name == 'nt':
 		path_var = "\\"
-		sdfcli_ext = ".bat"
 
 	def get_setting(config, args, force_default=False):
 		if (not force_default) and args.get(config):
