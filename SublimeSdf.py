@@ -14,6 +14,7 @@ from .lib.Greet import *
 
 def plugin_loaded():
 	Greet.display_changelog()
+	Settings.show_sdf()
 	Settings.check_version()
 
 class SdfExecOpen(sublime_plugin.TextCommand):

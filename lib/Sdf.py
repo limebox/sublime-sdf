@@ -151,23 +151,22 @@ class Sdf:
 
 		# Looping through the lines. This will also look at each line and determine if we need to output the error.
 		while True:
+
 			console_command.stdin.flush()
 			proc_read = console_command.stdout.readline()
+			if ( proc_read.find(b"[INFO] Building SDF CLI") >= 0 or proc_read.find(b"SuiteCloud Development Framework CLI (cli-") >= 0 ):
 
-			if ( proc_read.find(b"[INFO] Building SDF CLI") >= 0 ):
 				cli_version_line = proc_read.decode("utf-8").strip()
 				cli_version = cli_version_line.replace("[INFO] Building SDF CLI", "").strip()
+				cli_version = cli_version.replace("SuiteCloud Development Framework CLI (cli-", "").strip()
+				cli_version = cli_version.replace(")", "").strip()
+
 				if callback != None:
 					callback( cli_version )
 					console_command.kill()
 					break
 				elif cli_version != Sdf.Settings.get_setting("cli_version", {}):
-					print(">>>>>>>>>>>>>>>>>> NetSuite SDF Failed.")
-					sublime.status_message( "sdfcli version mismatch" )
-					Sdf.Settings.reset_environments( cli_version )
-					console_command.kill()
-					command_one = "version_mismatch"
-					execute_command_two = ""
+					Sdf.Settings.set_cli_version( cli_version )
 					break
 
 

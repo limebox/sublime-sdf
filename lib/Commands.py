@@ -144,7 +144,12 @@ class Commands():
 
 		def setTokenId( tokenId ):
 
-			Commands.reset_cli_arguments['savetoken'] = Commands.reset_cli_arguments['savetoken'] + " -tokenkey " + tokenId
+			cli_version = Settings.set_setting("cli_version")
+
+			if cli_version == "2018.2.1":
+				Commands.reset_cli_arguments['savetoken'] = Commands.reset_cli_arguments['savetoken'] + " -tokenkey " + tokenId
+			else:
+				Commands.reset_cli_arguments['savetoken'] = Commands.reset_cli_arguments['savetoken'] + " -tokenid " + tokenId
 			sublime.active_window().show_input_panel("NetSuite Token Secret", "", setTokenSecret, None, None )
 
 
