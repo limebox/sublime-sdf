@@ -69,7 +69,10 @@ class MenuContext:
 
 	def sdf_exec_create_project( path ):
 
-		if ( os.path.isfile( path ) or len(os.listdir( path ) ) > 0 ) :
+		try:
+			if ( os.path.isfile( path ) or len(os.listdir( path ) ) > 0 ) :
+				return False
+		except:
 			return False
 
 		return True

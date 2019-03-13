@@ -22,8 +22,11 @@ class SdfExecOpen(sublime_plugin.TextCommand):
 	temp_password = ""
 
 	def is_visible( self, paths = [] ):
-		path = paths[ 0 ]
-		return MenuContext.isSdfProject( path )
+		if len( paths ) > 0:
+			path = paths[ 0 ]
+			return MenuContext.isSdfProject( path )
+		else:
+			return False
 
 	def run(self, edit, **args):
 
@@ -39,12 +42,19 @@ class SdfExecViewInsertCommand(sublime_plugin.TextCommand):
 class SdfExecMenu(sublime_plugin.WindowCommand):
 
 	def is_visible( self, paths = [] ):
-		path = paths[ 0 ]
-		return MenuContext.isSdfProject( path )
+		if len( paths ) > 0:
+			path = paths[ 0 ]
+			return MenuContext.isSdfProject( path )
+		else:
+			return False
 
 class SdfExecNotSdfProject(sublime_plugin.WindowCommand):
 	def is_visible( self, paths = [], submenu = "False" ):
-		path = paths[ 0 ]
+		if len( paths ) > 0:
+			path = paths[ 0 ]
+		else:
+			return False
+
 		if MenuContext.isVisible( 'Test', path ):
 			return False
 		else:
@@ -58,17 +68,26 @@ class SdfExecNotSdfProject(sublime_plugin.WindowCommand):
 
 class SdfExecIsSdfProject(sublime_plugin.WindowCommand):
 	def is_visible( self, paths = [] ):
-		path = paths[ 0 ]
-		return MenuContext.isVisible( 'Test', path )
+		if len( paths ) > 0:
+			path = paths[ 0 ]
+			return MenuContext.isVisible( 'Test', path )
+		else:
+			return False
 
 
 class SdfExecActions(sublime_plugin.WindowCommand):
 
 	def is_visible( self, action, paths = [] ):
-		path = paths[ 0 ]
-		return MenuContext.isVisible( action, path )
+		if len( paths ) > 0:
+			path = paths[ 0 ]
+			return MenuContext.isVisible( action, path )
+		else:
+			return False
 
 	def run( self, action, paths = [], **args ):
-		path = paths[ 0 ]
-		Actions.run( action, path )
-		return True
+		if len( paths ) > 0:
+			path = paths[ 0 ]
+			Actions.run( action, path )
+			return True
+		else:
+			return False

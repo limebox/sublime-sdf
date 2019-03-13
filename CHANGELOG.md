@@ -3,6 +3,10 @@
 ## Changelog
 All notable changes to this project will be documented in this file.
 
+## 1.1910.13 - 2019-03-13
+- Fixed list length assumptions by first checking if a list has items
+- Added a try catch around the create project code in the event the user clicks a phantom file in Sublime
+
 ## 1.1910.12 - 2019-03-13
 - CLI changed how output is displayed. Plugin adjusted to get new version number for >19.1.0
 - Upon opening, a check is made to see if the .sdf file is listed in the File Excluse Pattern, if so, the plugin removes it
