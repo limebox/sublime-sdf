@@ -190,6 +190,7 @@ class Sdf:
 				or (proc_read.find(b"enter YES to continue") >= 0)
 				or ( proc_read.find(b"Type YES to update the manifest file") >= 0)
 				or ( proc_read.find(b"Proceed with deploy?") >= 0)
+				or ( proc_read.find(b"Type Yes (Y) to continue") >= 0)
 				):
 				console_command.stdin.write(b'YES\n')
 
@@ -206,7 +207,7 @@ class Sdf:
 				del account_settings[ Sdf.Settings.active_account ]
 				Sdf.Settings.set_setting( 'account_data', account_settings )
 
-			if (proc_read.find(b"BUILD SUCCESS") >= 0):
+			if (proc_read.find(b"BUILD SUCCESS") >= 0 or proc_read.find(b"Done.") >= 0):
 				console_command.kill()
 				break
 
@@ -249,7 +250,6 @@ class Sdf:
 					return
 
 				data_to_get = second_command_data[user_command].strip()
-				bad_characters = ["?","(",")", " ","&", ".xml"]
 
 				if command_two == "importbundle":
 					data_to_get_list = second_command_data[user_command].split(':')
@@ -258,19 +258,12 @@ class Sdf:
 					data_to_get_list = second_command_data[user_command].split(':')
 					data_to_get = data_to_get_list[ 0 ].lower() + ":" + data_to_get_list[ 1 ].lower()
 
-				print( "Selection Made: " + data_to_get )
-
 				if data_to_get == "All":
 					second_command_data.pop(0)
-					failed_files = []
 					acceptable_files = []
 
-					# SDF doesn't like spaces in filenames
 					for file in second_command_data:
-						if any(bad_character in file for bad_character in bad_characters):
-							failed_files.append( file )
-						elif file != "":
-							acceptable_files.append( '"' + file.strip() + '"' )
+						acceptable_files.append( '"' + file.strip() + '"' )
 
 					# Given that you asked for all files or objects, SDF crashes if you ask for too much.
 					# Because of this, we are going to ask for 100 files / objects at a time
@@ -286,22 +279,14 @@ class Sdf:
 
 						Sdf.threads.append( Thread(target=Sdf.execute_sdf_command, args=( command_two, execute_command_two, "", "", cli_arguments, custom_object, data_to_get )) )
 
-					if len( failed_files ) > 0:
-						Output.parse_output( command_one, "These files:\n" + ",".join(failed_files) + "Have characters not permitted by SDF.\nCharacters cannot be: (" + ",".join( bad_characters ) + ")", custom_object, True)
-
 					Sdf.current_thread = Sdf.current_thread + 1
 					Sdf.threads[ Sdf.current_thread ].start()
 
 				else:
-					if command_two != "importconfiguration" and any(bad_character in data_to_get for bad_character in bad_characters):
-						Output.parse_output( command_one, "The requested file: " + data_to_get + "\nHas characters not permitted by SDF. Characters cannot be: (" + ",".join( bad_characters ) + ")", custom_object, True)
-					else:
-						Sdf.threads.append( Thread(target=Sdf.execute_sdf_command, args=( command_two, execute_command_two, "", "", cli_arguments, custom_object, data_to_get )) )
-						Sdf.current_thread = Sdf.current_thread + 1
-						Sdf.threads[ Sdf.current_thread ].start()
+					# First wrap the data_to_get in quotes now that NetSuite supports getting files with spaces and special characters
+					data_to_get = '"' + data_to_get + '"'
+					Sdf.threads.append( Thread(target=Sdf.execute_sdf_command, args=( command_two, execute_command_two, "", "", cli_arguments, custom_object, data_to_get )) )
+					Sdf.current_thread = Sdf.current_thread + 1
+					Sdf.threads[ Sdf.current_thread ].start()
 
 			sublime.active_window().show_quick_panel(second_command_data, runSecondCall)
-
-
-
-

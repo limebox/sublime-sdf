@@ -15,7 +15,7 @@ class Settings( sublime_plugin.TextCommand ):
 	path_var = "/"
 	temp_password = ""
 	active_cli_version = ""
-	plugin_version = "1.1910.1"
+	plugin_version = "1.1910.14"
 
 	if os.name == 'nt':
 		path_var = "\\"
@@ -265,6 +265,5 @@ class Settings( sublime_plugin.TextCommand ):
 				del file_exclude[ index ]
 			index = index + 1
 
-		print( file_exclude )
 		sublime_settings.set('file_exclude_patterns', file_exclude)
 		sublime.save_settings('Preferences.sublime-settings')

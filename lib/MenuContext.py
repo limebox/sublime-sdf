@@ -146,7 +146,7 @@ class MenuContext:
 
 	def sdf_exec_save_token( path ):
 
-		cli_version = Settings.set_setting("cli_version")
+		cli_version = Settings.get_setting("cli_version", {})
 
 		if cli_version == "2018.2.0":
 			return False

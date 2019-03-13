@@ -3,6 +3,13 @@
 ## Changelog
 All notable changes to this project will be documented in this file.
 
+## 1.1910.14 - 2019-03-14
+- Removed "bad filenames" check as the CLI allows importing files via quotes (though this is broken in Linux at the moment)
+- Removed debug print lines
+- Changed "Yes" response checker to match new confirmation from 19.1 when importing objects
+- Added "Done" checker to determine when the CLI has completed (new for 19.1.0)
+- Fixed "Version Checker" from 1.1910.12
+
 ## 1.1910.13 - 2019-03-13
 - Fixed list length assumptions by first checking if a list has items
 - Added a try catch around the create project code in the event the user clicks a phantom file in Sublime
