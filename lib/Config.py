@@ -16,6 +16,8 @@ class Config():
 				"preview": "-p \"[PROJECT_FOLDER]\"",
 				"update": "-p \"[PROJECT_FOLDER]\"",
 				"updatecustomrecordwithinstances": "-p \"[PROJECT_FOLDER]\"",
+				# "uploadfiles": "-p \"[PROJECT_FOLDER]\"",
+				# "uploadfolders": "-p \"[PROJECT_FOLDER]\"",
 				"validate": "-p \"[PROJECT_FOLDER]\" -server",
 				"issuetoken": "",
 				"savetoken": "",
@@ -286,6 +288,16 @@ class Config():
 				"Updates the custom record object and its instances in the SuiteCloud project.",
 				"updatecustomrecordwithinstances"
 			],
+			# [
+			# 	"Upload File to Account",
+			# 	"Either the current file if in a SuiteScript folder, or show you a list of files to upload.",
+			# 	"uploadfiles"
+			# ],
+			# [
+			# 	"Upload Folder to Account",
+			# 	"Select an entire folder to upload",
+			# 	"uploadfolders"
+			# ],
 			[
 				"Validate Project",
 				"Validates the folder or zip file that contains the SuiteCloud project.",

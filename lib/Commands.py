@@ -86,6 +86,26 @@ class Commands():
 	def preview( sdfCallback ):
 		sdfCallback( Settings, 'preview', Commands.reset_cli_arguments )
 		return True
+
+	def uploadfolders( sdfCallback ):
+
+		return True
+
+	def uploadfiles( sdfCallback ):
+		def listfiles( userCommand ):
+			selected_file = Settings.selected_file_path.replace( Settings.project_folder + Settings.path_var + "FileCabinet", "" ) + Settings.path_var + file_list[ userCommand ]
+			Commands.reset_cli_arguments["uploadfiles"] += ' -paths "' + selected_file + '"'
+
+		if Settings.selected_file != '' and Settings.context == 'menu':
+
+			selected_file = Settings.selected_file_path.replace( Settings.project_folder + Settings.path_var + "FileCabinet", "" ) + Settings.path_var + Settings.selected_file
+			Commands.reset_cli_arguments["uploadfiles"] += ' -paths "' + selected_file + '"'
+
+			sdfCallback( Settings, 'uploadfiles', Commands.reset_cli_arguments )
+
+
+		return True
+
 	def update( sdfCallback, action = 'update' ):
 
 		def selectObjectToUpdate( user_command ):
@@ -144,7 +164,7 @@ class Commands():
 
 		def setTokenId( tokenId ):
 
-			cli_version = Settings.set_setting("cli_version")
+			cli_version = Settings.get_setting( "cli_version", {} )
 
 			if cli_version == "2018.2.1":
 				Commands.reset_cli_arguments['savetoken'] = Commands.reset_cli_arguments['savetoken'] + " -tokenkey " + tokenId
@@ -178,6 +198,9 @@ class Commands():
 
 	def run( action = False, actionParameter = None ):
 
+		# Reset the reset argument list
+		Commands.reset_cli_arguments = {}
+
 		for argument in Commands.cli_arguments:
 			Commands.reset_cli_arguments[ argument ] = Commands.cli_arguments[ argument ]
 
@@ -207,6 +230,7 @@ class Commands():
 
 			object_type = 0
 			files = []
+
 			getattr(Commands, Commands.adjusted_commands[selected_id][2])( Sdf.prepare_command )
 
 			# End runSdfExec
@@ -214,6 +238,7 @@ class Commands():
 		Commands.adjusted_commands = [] # Reset the adjusted_commands array
 
 		if action == False:
+			Commands.actionParameter = None # Reset this when called from the command palette
 			Settings.context = "tab"
 			account_settings = Settings.get_setting('account_data', {})
 			for command in Commands.cli_commands:

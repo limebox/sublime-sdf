@@ -3,6 +3,13 @@
 ## Changelog
 All notable changes to this project will be documented in this file.
 
+## 1.1910.15 - 2019-03-20
+- Fixed path issue in context menu for Windows vs Mac
+- Fixed issue when executing certain commands from the sidebar, then executing other commands from the command palette
+- Fixed issue with "Save Token" calling the wrong function to confirm which version the request is being made from
+- Initial groundwork for "Upload Folder" and "Upload File" commands
+- Hid "Install Limebox Framework" for non-empty folders to avoid confusion
+
 ## 1.1910.14 - 2019-03-14
 - Removed "bad filenames" check as the CLI allows importing files via quotes (though this is broken in Linux at the moment)
 - Removed debug print lines

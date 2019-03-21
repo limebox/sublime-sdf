@@ -32,7 +32,7 @@ class MenuContext:
 
 	def sdf_exec_install_framework( path ):
 		relative_path = path.replace( Settings.project_folder, "" )
-		if relative_path.startswith( Settings.path_var + 'FileCabinet' + Settings.path_var + 'SuiteScripts' ):
+		if relative_path.startswith( Settings.path_var + 'FileCabinet' + Settings.path_var + 'SuiteScripts' ) and os.path.isdir( path ) and len(os.listdir( path ) ) == 0:
 			return True
 
 		return False
@@ -53,9 +53,33 @@ class MenuContext:
 
 		return False
 
+	def sdf_exec_upload_files( path ):
+		return False
+		cli_version = Settings.get_setting("cli_version", {})
+
+		if cli_version < "2019.1.0":
+			return False
+
+		if ( "FileCabinet" + Settings.path_var + "SuiteScripts" in path and (".attributes" in path) == False and os.path.isfile( path ) ) :
+			return True
+
+		return False
+
+	def sdf_exec_upload_folders( path ):
+		return False
+		cli_version = Settings.get_setting("cli_version", {})
+
+		if cli_version < "2019.1.0":
+			return False
+
+		if ( "FileCabinet" + Settings.path_var + "SuiteScripts" in path and (".attributes" in path) == False and os.path.isdir( path ) ) :
+			return True
+
+		return False
+
 	def sdf_exec_download_file( path ):
 
-		if ( "FileCabinet/SuiteScripts" in path and (".attributes" in path) == False and os.path.isfile( path ) ) :
+		if ( "FileCabinet" + Settings.path_var + "SuiteScripts" in path and (".attributes" in path) == False and os.path.isfile( path ) ) :
 			return True
 
 		return False

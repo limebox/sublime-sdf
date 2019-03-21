@@ -89,6 +89,12 @@ class Actions:
 	def sdf_exec_revoke_token():
 		Commands.run( 'revoketoken' )
 
+	def sdf_exec_upload_files():
+		Commands.run( 'uploadfiles' )
+
+	def sdf_exec_upload_folders():
+		Commands.run( 'uploadfolders' )
+
 	def sdf_exec_update():
 		Commands.run( 'update' )
 

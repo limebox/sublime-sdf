@@ -15,7 +15,7 @@ class Settings( sublime_plugin.TextCommand ):
 	path_var = "/"
 	temp_password = ""
 	active_cli_version = ""
-	plugin_version = "1.1910.14"
+	plugin_version = "1.1910.15"
 
 	if os.name == 'nt':
 		path_var = "\\"
@@ -139,10 +139,12 @@ class Settings( sublime_plugin.TextCommand ):
 	def get_environment( currentFile, executeCallback, justVerify = False ):
 
 		parent_location = currentFile.rfind( Settings.path_var )
+		Settings.selected_file_path = currentFile[:parent_location]
 
 		if os.path.isfile( currentFile ):
-			Settings.selected_file_path = currentFile[:parent_location]
 			Settings.selected_file = currentFile[parent_location + 1:]
+		else:
+			Settings.selected_file = None
 
 		Settings.project_folder = currentFile[:parent_location]
 
